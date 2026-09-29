@@ -176,7 +176,7 @@ export default function Home() {
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" />
                       <span className="font-semibold text-[#03185D]">
-                        Fideicomiso Educativo Autónomo Raúl Coka Barriga · Diners Club · UIDE
+                        Fondo Educativo
                       </span>
                     </div>
                     <span className="font-mono text-[11px] text-[#94A3B8]">
