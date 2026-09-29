@@ -3,6 +3,7 @@ export interface Career {
   name: string;
   faculty: string;
   campus?: string;
+  url?: string;
   semesters: number;
   credits: number;
   matriculaSem?: number;

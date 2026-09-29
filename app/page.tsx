@@ -3,8 +3,10 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import {
-  CAREERS_DATA,
-  getCareersByCampus,
+  PREGRADO_CAREERS,
+  PREGRADO_QUITO,
+  PREGRADO_GUAYAQUIL,
+  PREGRADO_ONLINE,
   getCampusExtras,
 } from "@/lib/data";
 import { Career } from "@/lib/types";
@@ -23,6 +25,7 @@ import {
   FileText,
   Mail,
   Info,
+  ExternalLink,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { getAssetPath } from "@/lib/paths";
@@ -33,27 +36,21 @@ export default function Home() {
   const [leadModalOpen, setLeadModalOpen] = useState(false);
   const [leadType, setLeadType] = useState<"ahorro" | "asesoria">("ahorro");
 
-  // Career Selection (UIO Pregrado)
-  const selectedCampus = "Quito"; // Fiel al wireframe: "Menú despegable carreras pregrado UIO"
-  const availableCareers = useMemo(() => {
-    const list = getCareersByCampus(selectedCampus);
-    return list.length > 0 ? list : CAREERS_DATA;
-  }, [selectedCampus]);
-
+  // Career Selection (Exclusivamente Pregrado: Quito UIO, Guayaquil, Online - Sin PVC ni Maestrías)
   const [selectedCareerId, setSelectedCareerId] = useState<string>(
-    availableCareers[0]?.id || "medicina"
+    PREGRADO_QUITO[0]?.id || "uio-administracion-empresas"
   );
   const [applyPadScholarship, setApplyPadScholarship] = useState<boolean>(false);
 
   const selectedCareer = useMemo(() => {
-    const found = availableCareers.find((c) => c.id === selectedCareerId);
-    return found || availableCareers[0] || CAREERS_DATA[0];
-  }, [availableCareers, selectedCareerId]);
+    const found = PREGRADO_CAREERS.find((c) => c.id === selectedCareerId);
+    return found || PREGRADO_QUITO[0] || PREGRADO_CAREERS[0];
+  }, [selectedCareerId]);
 
   // Complementary fees (Consejo Estudiantil, Seguro Universitario)
   const campusExtras = useMemo(
-    () => getCampusExtras(selectedCampus),
-    [selectedCampus]
+    () => getCampusExtras(selectedCareer.campus || "Quito"),
+    [selectedCareer.campus]
   );
 
   // Active Target Goal based on career & scholarship
@@ -356,9 +353,14 @@ export default function Home() {
 
               {/* Col C (C9:C10): Menú despegable carreras pregrado UIO */}
               <div className="lg:col-span-3 bg-[#F8FAFC] p-6 rounded-2xl border border-[#CBD5E1] space-y-4">
-                <span className="text-xs font-black uppercase tracking-wider text-[#2952E8] block">
-                  Catálogo Pregrado UIO
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-[#2952E8] block">
+                    Oferta Exclusiva Pregrado
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EBF0FF] text-[#03185D]">
+                    {PREGRADO_CAREERS.length} Carreras
+                  </span>
+                </div>
                 <label
                   htmlFor="career-dropdown-uio"
                   className="block text-sm font-black uppercase tracking-tight text-[#03185D]"
@@ -373,11 +375,27 @@ export default function Home() {
                     onChange={(e) => setSelectedCareerId(e.target.value)}
                     className="w-full h-12 pl-4 pr-10 rounded-xl border border-[#CBD5E1] bg-white text-[#03185D] font-bold text-sm focus:outline-none focus:ring-2 focus:ring-[#2952E8] appearance-none cursor-pointer shadow-xs"
                   >
-                    {availableCareers.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name} ({c.semesters} sem.)
-                      </option>
-                    ))}
+                    <optgroup label="Pregrado Quito (UIO) — 21 Carreras">
+                      {PREGRADO_QUITO.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} ({c.semesters} sem.)
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Pregrado Guayaquil — 1 Carrera">
+                      {PREGRADO_GUAYAQUIL.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} ({c.semesters} sem.)
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Pregrado Online — 2 Carreras">
+                      {PREGRADO_ONLINE.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} ({c.semesters} sem.)
+                        </option>
+                      ))}
+                    </optgroup>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#03185D]">
                     <ChevronDown className="w-4 h-4" />
@@ -385,15 +403,33 @@ export default function Home() {
                 </div>
 
                 <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] space-y-2 text-xs">
-                  <div className="font-bold text-[#03185D]">
-                    {selectedCareer.name}
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="font-bold text-[#03185D] leading-tight">
+                      {selectedCareer.name}
+                    </div>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EBF0FF] text-[#2952E8] shrink-0">
+                      {selectedCareer.campus || "Quito"}
+                    </span>
                   </div>
                   <div className="text-[#656565]">
                     {selectedCareer.faculty}
                   </div>
-                  <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#16A34A] bg-[#DCFCE7] px-2.5 py-1 rounded-full">
-                    <span>ASU Pathway: {selectedCareer.asuPathway}</span>
-                  </div>
+                  {selectedCareer.asuPathway && (
+                    <div className="text-[11px] font-bold text-[#16A34A] bg-[#DCFCE7] px-2.5 py-1 rounded-lg">
+                      ASU Pathway: {selectedCareer.asuPathway}
+                    </div>
+                  )}
+                  {selectedCareer.url && (
+                    <a
+                      href={selectedCareer.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#2952E8] hover:underline pt-1"
+                    >
+                      <span>Ver plan de estudios oficial</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -404,7 +440,7 @@ export default function Home() {
                     Valor promedio carrera
                   </span>
                   <span className="text-[11px] font-bold text-[#2952E8] bg-[#EBF0FF] px-2.5 py-0.5 rounded-full">
-                    UIDE Quito
+                    UIDE {selectedCareer.campus || "Quito"}
                   </span>
                 </div>
 

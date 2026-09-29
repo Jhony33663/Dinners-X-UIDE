@@ -1,6 +1,7 @@
 import { Career, Pillar, PartnerBenefit, FAQItem } from "./types";
 
 export * from "./careers-uide";
+export * from "./pregrado-careers";
 
 export const CAREERS_DATA: Career[] = [
   {
