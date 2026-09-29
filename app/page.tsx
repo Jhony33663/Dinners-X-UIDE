@@ -168,21 +168,14 @@ export default function Home() {
               {/* Col B:C (Spans 2 columns / 8 de 12) */}
               <div className="lg:col-span-8">
                 <div className="bg-white/94 backdrop-blur-xl p-8 sm:p-10 rounded-3xl border border-white/85 shadow-[0_20px_50px_-15px_rgba(3,24,93,0.18)] space-y-4">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBF0FF] text-[#03185D] text-xs font-bold border border-[#D5E2FF]">
+                    <span className="w-2 h-2 rounded-full bg-[#2952E8]" />
+                    <span>Fondo Educativo</span>
+                  </div>
+
                   <p className="text-base sm:text-xl text-[#03185D] leading-relaxed font-semibold border-l-4 border-[#2952E8] pl-5 py-1">
                     &ldquo;Reinventors PAD es un programa de ahorro educativo en alianza entre UIDE, Diners Club y RCB que permite a las familias planificar el futuro universitario de sus hijos mientras acceden a experiencias de desarrollo personal, académico y familiar&rdquo;
                   </p>
-
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#E2E8F0]/70 text-xs text-[#656565]">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" />
-                      <span className="font-semibold text-[#03185D]">
-                        Fondo Educativo
-                      </span>
-                    </div>
-                    <span className="font-mono text-[11px] text-[#94A3B8]">
-                      Asset Hero Lifestyle: 1920 × 850 px
-                    </span>
-                  </div>
                 </div>
               </div>
 
@@ -719,7 +712,7 @@ export default function Home() {
                       <div className="bg-white p-4 rounded-lg border border-[#E2E8F0] shadow-xs space-y-2 text-xs">
                         <div className="flex justify-between font-bold text-[#03185D]">
                           <span>
-                            Programa: Reinventors PAD (Fideicomiso RCB - Diners Club - UIDE)
+                            Programa: Reinventors PAD (Fondo Educativo)
                           </span>
                           <span className="text-[#16A34A]">Plan Vigente 2026</span>
                         </div>
