@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import SmoothScrollProvider from "@/components/smooth-scroll/SmoothScrollProvider";
 import TopographyCanvas from "@/components/canvas/TopographyCanvas";
 import PanoramicView from "@/components/dashboard/PanoramicView";
-import UideHeroHeader from "@/components/hero/UideHeroHeader";
+import UideHeroBanner from "@/components/hero/UideHeroBanner";
 import { CAREERS_DATA, FAQ_DATA, UIDE_CAMPUSES, getCareersByCampus, getCampusExtras } from "@/lib/data";
 import { Career } from "@/lib/types";
 import {
@@ -220,16 +220,12 @@ export default function Home() {
         <TopographyCanvas />
 
         {/* ========================================================
-            GRAND UIDE HERO HEADER WITH CIALDINI PERSUASION & VISUAL MOSAIC
-            (Apegado a la marca UIDE e inspirado en la referencia fotográfica)
+            HERO BANNER INSPIRADO EN LA REFERENCIA VISUAL (5 ESCENAS + CARD DORADA)
+            Con tipografía Poppins y Brachial, principios de Cialdini y sin header superior adicional
            ======================================================== */}
-        <UideHeroHeader
+        <UideHeroBanner
           onOpenSimulator={scrollToSimulator}
           onOpenSavingsForm={scrollToSavingsForm}
-          onOpenAdvisoryForm={scrollToAdvisoryForm}
-          onScrollToCarreras={scrollToCarreras}
-          onScrollToBenefits={scrollToBenefits}
-          onScrollToFaq={scrollToFaq}
         />
 
         {/* ========================================================
