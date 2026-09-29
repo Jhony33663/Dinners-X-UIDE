@@ -2,12 +2,18 @@ export interface Career {
   id: string;
   name: string;
   faculty: string;
+  campus?: string;
   semesters: number;
   credits: number;
+  matriculaSem?: number;
+  colegiaturaSem?: number;
+  costoTotalSem?: number;
   totalTuitionRef: number;
+  totalConBeca?: number;
+  ahorroBeca?: number;
   asuDualDegree: boolean;
-  asuPathway: string;
-  iconName: string;
+  asuPathway?: string;
+  iconName?: string;
   description: string;
   highlight: string;
 }

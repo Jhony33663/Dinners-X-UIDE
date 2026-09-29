@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import SmoothScrollProvider from "@/components/smooth-scroll/SmoothScrollProvider";
 import TopographyCanvas from "@/components/canvas/TopographyCanvas";
 import PanoramicView from "@/components/dashboard/PanoramicView";
-import { CAREERS_DATA, FAQ_DATA } from "@/lib/data";
+import { CAREERS_DATA, FAQ_DATA, UIDE_CAMPUSES, getCareersByCampus } from "@/lib/data";
 import { Career } from "@/lib/types";
 import {
   calculatePadQuote,
@@ -34,17 +34,27 @@ import {
   Info,
   Calendar,
   DollarSign,
+  MapPin,
+  GraduationCap,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { getAssetPath } from "@/lib/paths";
 
 export default function Home() {
   const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [selectedCampus, setSelectedCampus] = useState<string>("Quito");
   const [selectedCareer, setSelectedCareer] = useState<Career>(CAREERS_DATA[0]);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
+  // Available Careers by selected campus from official cotizador
+  const availableCareers = useMemo(() => {
+    const list = getCareersByCampus(selectedCampus);
+    return list.length > 0 ? list : CAREERS_DATA;
+  }, [selectedCampus]);
+
   // Simulator State ("calcula tu ahorro ahora")
   const [childAge, setChildAge] = useState<number>(8);
+  const [applyPadScholarship, setApplyPadScholarship] = useState<boolean>(false);
   const [targetGoal, setTargetGoal] = useState<number>(CAREERS_DATA[0].totalTuitionRef);
   const [isCustomGoal, setIsCustomGoal] = useState<boolean>(false);
   const [showAmortization, setShowAmortization] = useState<boolean>(false);
@@ -79,7 +89,37 @@ export default function Home() {
   const handleCareerChange = (career: Career) => {
     setSelectedCareer(career);
     if (!isCustomGoal) {
-      setTargetGoal(career.totalTuitionRef);
+      if (applyPadScholarship && career.totalConBeca) {
+        setTargetGoal(career.totalConBeca);
+      } else {
+        setTargetGoal(career.totalTuitionRef);
+      }
+    }
+  };
+
+  const handleToggleScholarship = (apply: boolean) => {
+    setApplyPadScholarship(apply);
+    if (!isCustomGoal) {
+      if (apply && selectedCareer.totalConBeca) {
+        setTargetGoal(selectedCareer.totalConBeca);
+      } else {
+        setTargetGoal(selectedCareer.totalTuitionRef);
+      }
+    }
+  };
+
+  const handleCampusChange = (campus: string) => {
+    setSelectedCampus(campus);
+    const list = getCareersByCampus(campus);
+    if (list.length > 0) {
+      setSelectedCareer(list[0]);
+      if (!isCustomGoal) {
+        if (applyPadScholarship && list[0].totalConBeca) {
+          setTargetGoal(list[0].totalConBeca);
+        } else {
+          setTargetGoal(list[0].totalTuitionRef);
+        }
+      }
     }
   };
 
@@ -217,23 +257,45 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Menú desplegable carreras pregrado UIO & Valor promedio carrera */}
+          {/* Selector de Sede / Campus UIDE Oficial */}
+          <div className="max-w-3xl mx-auto mb-6 flex flex-wrap justify-center gap-2">
+            {UIDE_CAMPUSES.map((campus) => {
+              const isActive = selectedCampus.toLowerCase() === campus.toLowerCase();
+              return (
+                <button
+                  key={campus}
+                  type="button"
+                  onClick={() => handleCampusChange(campus)}
+                  className={`px-4 py-2.5 rounded-2xl text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer border flex items-center space-x-2 ${
+                    isActive
+                      ? "bg-[#910048] text-white border-pink-400 shadow-[0_0_20px_rgba(145,0,72,0.5)] scale-105"
+                      : "bg-[#0a0d16]/90 text-slate-300 border-white/10 hover:border-white/30 hover:text-white"
+                  }`}
+                >
+                  <MapPin className={`w-3.5 h-3.5 ${isActive ? "text-[#ffc72c]" : "text-slate-400"}`} />
+                  <span>Campus {campus}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Menú desplegable carreras pregrado UIDE & Valor oficial carrera (Modelo Cotizador UG/PG) */}
           <div className="max-w-3xl mx-auto glass-panel bg-[#0a0d16]/95 rounded-3xl p-6 sm:p-8 border border-white/20 space-y-6 shadow-2xl">
             <div className="space-y-2">
               <label className="text-xs font-mono font-bold uppercase tracking-wider text-slate-100 flex items-center justify-between">
-                <span>Menú despegable carreras pregrado UIO</span>
-                <span className="text-[#ffc72c] font-bold">Quito</span>
+                <span>Catálogo Oficial Pregrado UIDE ({selectedCampus})</span>
+                <span className="text-[#ffc72c] font-bold">{availableCareers.length} carreras disponibles</span>
               </label>
 
               <select
                 value={selectedCareer.id}
                 onChange={(e) => {
-                  const career = CAREERS_DATA.find((c) => c.id === e.target.value);
+                  const career = availableCareers.find((c) => c.id === e.target.value) || CAREERS_DATA.find((c) => c.id === e.target.value);
                   if (career) handleCareerChange(career);
                 }}
                 className="w-full bg-[#08090C] text-white text-sm sm:text-base font-medium rounded-2xl p-4 border border-white/25 focus:border-[#ff3377] focus:outline-none cursor-pointer"
               >
-                {CAREERS_DATA.map((c) => (
+                {availableCareers.map((c) => (
                   <option key={c.id} value={c.id} className="bg-[#0c0f14]">
                     {c.name} — {c.faculty}
                   </option>
@@ -241,27 +303,62 @@ export default function Home() {
               </select>
             </div>
 
-            {/* Valor promedio carrera */}
-            <div className="p-5 rounded-2xl bg-gradient-to-r from-[#910048]/30 via-[#002D72]/30 to-[#EAAA00]/25 border border-white/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <span className="text-[10px] font-mono text-slate-300 uppercase tracking-wider block font-semibold">
-                  Valor promedio carrera
-                </span>
-                <div className="text-3xl sm:text-4xl font-black text-[#ffc72c] font-mono mt-1 drop-shadow">
-                  ${selectedCareer.totalTuitionRef.toLocaleString("en-US")}
-                  <span className="text-sm font-normal text-slate-200"> USD</span>
+            {/* Valor oficial y promedio de carrera (Modelo Cotizador UIDE UG/PG) */}
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-[#910048]/30 via-[#002D72]/30 to-[#EAAA00]/25 border border-white/15 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-[10px] font-mono text-slate-300 uppercase tracking-wider block font-semibold">
+                    Valor Oficial Total Carrera ({selectedCareer.semesters} semestres)
+                  </span>
+                  <div className="text-3xl sm:text-4xl font-black text-[#ffc72c] font-mono mt-1 drop-shadow">
+                    ${selectedCareer.totalTuitionRef.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    <span className="text-sm font-normal text-slate-200"> USD</span>
+                  </div>
+                  <div className="text-[11px] text-slate-200 font-mono mt-0.5 flex flex-wrap items-center gap-2">
+                    <span>{selectedCareer.semesters} semestres</span>
+                    <span>•</span>
+                    <span>{selectedCareer.highlight}</span>
+                    {selectedCareer.asuDualDegree && (
+                      <span className="px-2 py-0.5 rounded-full bg-red-950/80 border border-red-500/40 text-red-200 text-[10px] font-bold">
+                        ASU 3+1 / Dual Degree
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="text-[11px] text-slate-200 font-mono mt-0.5">
-                  {selectedCareer.semesters} semestres • {selectedCareer.highlight}
-                </div>
+
+                <button
+                  onClick={scrollToSimulator}
+                  className="py-3 px-5 rounded-xl bg-gradient-to-r from-[#a80054] to-[#c70063] hover:from-[#c70063] hover:to-[#e60073] text-white text-xs font-bold font-mono uppercase tracking-wider transition-all cursor-pointer shadow-lg active:scale-95 shrink-0"
+                >
+                  Calcular Ahorro para esta Carrera
+                </button>
               </div>
 
-              <button
-                onClick={scrollToSimulator}
-                className="py-3 px-5 rounded-xl bg-gradient-to-r from-[#a80054] to-[#c70063] hover:from-[#c70063] hover:to-[#e60073] text-white text-xs font-bold font-mono uppercase tracking-wider transition-all cursor-pointer shadow-lg active:scale-95"
-              >
-                Calcular Ahorro para esta Carrera
-              </button>
+              {/* Desglose oficial de matrícula y colegiatura del cotizador */}
+              {selectedCareer.colegiaturaSem && (
+                <div className="pt-3 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
+                    <span className="text-[10px] text-slate-400 block uppercase">Matrícula / Semestre</span>
+                    <span className="font-bold text-white">${selectedCareer.matriculaSem?.toFixed(2)} USD</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
+                    <span className="text-[10px] text-slate-400 block uppercase">Colegiatura / Semestre</span>
+                    <span className="font-bold text-white">${selectedCareer.colegiaturaSem?.toFixed(2)} USD</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30">
+                    <span className="text-[10px] text-emerald-400 block uppercase">Con Beca Fidelidad PAD</span>
+                    <span className="font-bold text-emerald-300">
+                      ${selectedCareer.totalConBeca?.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#910048]/30 border border-pink-400/30">
+                    <span className="text-[10px] text-pink-300 block uppercase">Ahorro con Beca UIDE</span>
+                    <span className="font-bold text-pink-200">
+                      -${selectedCareer.ahorroBeca?.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -351,23 +448,56 @@ export default function Home() {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5">
-                  <div className="text-xs">
-                    <span className="text-slate-400 block text-[10px] font-mono uppercase">
-                      Carrera Seleccionada:
-                    </span>
-                    <span className="text-white font-bold text-sm">
-                      {selectedCareer.name} ({selectedCareer.semesters} semestres)
-                    </span>
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-white/[0.03] border border-white/5">
+                    <div className="text-xs">
+                      <span className="text-slate-400 block text-[10px] font-mono uppercase">
+                        Carrera y Sede Seleccionada:
+                      </span>
+                      <span className="text-white font-bold text-sm block">
+                        {selectedCareer.name}
+                      </span>
+                      <span className="text-[11px] text-slate-300 font-mono">
+                        Campus {selectedCareer.campus || selectedCampus} • {selectedCareer.semesters} semestres
+                      </span>
+                    </div>
+
+                    <div className="text-left sm:text-right">
+                      <span className="text-slate-400 block text-[10px] font-mono uppercase">
+                        {applyPadScholarship ? "Meta con Beca Fidelidad PAD (-21%):" : "Meta Colegiatura Total (Sin Beca):"}
+                      </span>
+                      <span className="text-xl sm:text-2xl font-black font-mono text-[#ffc72c]">
+                        ${targetGoal.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-slate-400 block text-[10px] font-mono uppercase">
-                      Meta Colegiatura Total:
-                    </span>
-                    <span className="text-xl sm:text-2xl font-black font-mono text-[#ffc72c]">
-                      ${targetGoal.toLocaleString("en-US")} USD
-                    </span>
-                  </div>
+
+                  {/* Toggle Beca Fidelidad PAD UIDE */}
+                  {selectedCareer.totalConBeca && (
+                    <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+                      <div className="flex items-center space-x-2 text-emerald-300">
+                        <GraduationCap className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>
+                          ¿Aplicar Beca Fidelidad PAD UIDE?{" "}
+                          <strong className="text-white">
+                            Ahorras ${selectedCareer.ahorroBeca?.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+                          </strong>
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleToggleScholarship(!applyPadScholarship)}
+                        className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase transition-all cursor-pointer ${
+                          applyPadScholarship
+                            ? "bg-emerald-500 text-black shadow-md font-black"
+                            : "bg-white/10 text-slate-300 hover:text-white border border-white/10"
+                        }`}
+                      >
+                        {applyPadScholarship ? "✓ Beca PAD Activada" : "+ Activar Beca PAD"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
