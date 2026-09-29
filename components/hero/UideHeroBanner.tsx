@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowRight, GraduationCap, ShieldCheck } from "lucide-react";
+import { ArrowRight, GraduationCap, ShieldCheck, Sparkles } from "lucide-react";
 import { getAssetPath } from "@/lib/paths";
 
 interface UideHeroBannerProps {
@@ -16,25 +16,47 @@ export default function UideHeroBanner({
   return (
     <section className="relative w-full overflow-hidden bg-[#08090C] text-white select-none border-b border-white/10">
       {/* ========================================================
-          VISUAL COLLAGE CONTAINER (5 escenas fotográficas HD)
+          HERO BACKGROUND CONTAINER (Foto oficial estudiantes UIDE x Diners Club)
          ======================================================== */}
-      <div className="relative w-full min-h-[460px] sm:min-h-[520px] md:min-h-[560px] lg:aspect-[1862/644] flex items-center justify-center p-4 sm:p-6 lg:p-8">
-        {/* Background HD Collage */}
+      <div className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center lg:justify-end p-4 sm:p-8 lg:p-14">
+        {/* Background HD Image with students */}
         <div
-          className="absolute inset-0 bg-cover bg-center filter brightness-[0.92] contrast-[1.05]"
+          className="absolute inset-0 bg-cover bg-center lg:bg-[center_left_20%] filter brightness-[0.9] contrast-[1.05]"
           style={{
-            backgroundImage: `url(${getAssetPath("/images/hero/hero_clean_hd.jpg")})`,
+            backgroundImage: `url(${getAssetPath("/images/hero/uide_students_clean_hd.jpg")})`,
           }}
         />
 
-        {/* Cinematic Vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#08090C]/70 via-transparent to-[#08090C]/40 pointer-events-none" />
+        {/* Cinematic Vignette Gradients for Legibility */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/80 lg:to-black/85 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#08090C] via-transparent to-black/60 pointer-events-none" />
+
+        {/* Top Floating Tri-Brand Pill */}
+        <div className="absolute top-4 sm:top-6 left-4 sm:left-8 z-20 flex items-center space-x-2 sm:space-x-3 bg-white/95 px-3 sm:px-4 py-1.5 rounded-full shadow-xl border border-slate-200">
+          <img
+            src={getAssetPath("/logos/uide-logo-opt.webp")}
+            alt="UIDE Powered by ASU"
+            className="h-5 sm:h-6 w-auto object-contain"
+          />
+          <span className="text-slate-300 font-light text-xs">|</span>
+          <img
+            src={getAssetPath("/logos/diners-logo-opt.png")}
+            alt="Diners Club"
+            className="h-4 sm:h-5 w-auto object-contain"
+          />
+          <span className="text-slate-300 font-light text-xs">|</span>
+          <img
+            src={getAssetPath("/logos/rcb-logo-opt.webp")}
+            alt="Raúl Coka Barriga"
+            className="h-4 sm:h-5 w-auto object-contain"
+          />
+        </div>
 
         {/* ========================================================
-          GLASSMORPHIC FLOATING CARD (Colorimetría UIDE: Pantone 221 C, 288 C, 124 C)
-          Sin textos tachados: Solo titular en Brachial/Poppins y botones CTA
-         ======================================================== */}
-        <div className="relative z-10 max-w-xl sm:max-w-2xl lg:max-w-3xl w-full mx-auto px-6 py-8 sm:px-10 sm:py-10 lg:px-12 lg:py-10 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#910048]/35 via-[#002D72]/40 to-[#08090C]/75 border border-white/20 hover:border-[#EAAA00]/50 shadow-[0_25px_60px_rgba(0,0,0,0.85),0_0_40px_rgba(145,0,72,0.3),inset_0_1px_1px_rgba(255,255,255,0.25)] backdrop-blur-2xl text-center space-y-5 sm:space-y-6 transition-all duration-300">
+            GLASSMORPHIC HERO CARD (Colorimetría Oficial UIDE: 221 C, 288 C, 124 C)
+            Ubicada estratégicamente a la derecha para lucir la fotografía institucional a la izquierda
+           ======================================================== */}
+        <div className="relative z-10 max-w-xl lg:max-w-2xl w-full mx-auto lg:mr-4 lg:ml-auto px-6 py-8 sm:px-10 sm:py-10 rounded-3xl bg-gradient-to-br from-[#910048]/40 via-[#002D72]/45 to-[#08090C]/80 border border-white/20 hover:border-[#EAAA00]/50 shadow-[0_25px_60px_rgba(0,0,0,0.85),0_0_40px_rgba(145,0,72,0.35),inset_0_1px_1px_rgba(255,255,255,0.25)] backdrop-blur-2xl text-center space-y-6 transition-all duration-300">
           {/* Main Headline with Brachial (Syncopate) + Poppins:
               Line 1 & 2 in UIDE Gold (Pantone 124 C #EAAA00), Line 3 in crisp white
           */}
