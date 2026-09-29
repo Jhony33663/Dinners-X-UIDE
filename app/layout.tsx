@@ -27,7 +27,7 @@ const syncopate = Syncopate({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#08090C",
+  themeColor: "#03185D",
   width: "device-width",
   initialScale: 1,
 };
@@ -35,17 +35,17 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "REINVENTORS PAD | UIDE × Diners Club × Raúl Coka Barriga",
   description:
-    "El futuro de tus hijos no se espera: se reinventa desde hoy. Programa fiduciario de ahorro universitario con respaldo Diners Club, seguros Raúl Coka Barriga y vinculación a Arizona State University.",
+    "El futuro de tus hijos lo reinventas desde hoy. Programa fiduciario y previsor de ahorro educativo universitario en alianza entre UIDE, Diners Club y Raúl Coka Barriga.",
   keywords: [
     "Reinventors PAD",
     "UIDE",
     "Diners Club Ecuador",
     "Raul Coka Barriga",
     "Arizona State University",
-    "Ahorro Universitario",
-    "Fondo Educativo",
+    "Ahorro Educativo",
+    "Fideicomiso Universitario",
   ],
-  authors: [{ name: "UIDE & Diners Club" }],
+  authors: [{ name: "UIDE, Diners Club & Raúl Coka Barriga" }],
 };
 
 export default function RootLayout({
@@ -58,7 +58,7 @@ export default function RootLayout({
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${syncopate.variable} h-full antialiased font-poppins`}
     >
-      <body className="min-h-full flex flex-col bg-[#08090C] text-[#F8FAFC] font-poppins">
+      <body className="min-h-full flex flex-col bg-white text-[#313131] font-poppins antialiased selection:bg-[#4C71FC] selection:text-white">
         {children}
       </body>
     </html>
