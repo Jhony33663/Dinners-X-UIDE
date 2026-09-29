@@ -176,55 +176,24 @@ export default function Home() {
             {/* Co-Branding Oficial UIDE x Diners Club (Lineamientos Pág. 9) */}
             <div className="flex items-center gap-3 sm:gap-6">
               {/* Logo UIDE con Afiliación ASU */}
-              <div className="flex items-center gap-2">
-                <div className="relative w-8 h-9 flex items-center justify-center shrink-0">
-                  <svg viewBox="0 0 40 45" className="w-8 h-9" fill="none">
-                    <path
-                      d="M6 4C6 24 16 38 28 38C20 36 14 26 14 8L6 4Z"
-                      fill="#910048"
-                    />
-                    <path
-                      d="M19 14C23 14 31 18 31 30C28 29 25 24 25 18L19 14Z"
-                      fill="#EAAA00"
-                    />
-                  </svg>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xl font-black text-[#910048] tracking-tighter leading-none">
-                    UIDE
-                  </span>
-                  <span className="text-[8px] font-semibold text-[#313131] tracking-tight leading-tight">
-                    powered by{" "}
-                    <strong className="text-[#910048]">Arizona State Univ.</strong>
-                  </span>
-                </div>
+              <div className="flex items-center">
+                <img
+                  src={getAssetPath("logos/uide-logo.webp")}
+                  alt="UIDE powered by Arizona State University"
+                  className="h-10 w-auto object-contain"
+                />
               </div>
 
               {/* Separador Vertical Oficial */}
               <div className="h-8 w-px bg-[#CBD5E1]" />
 
               {/* Logo Diners Club International */}
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#03185D] flex items-center justify-center text-white shadow-xs shrink-0">
-                  <svg
-                    className="w-5 h-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 2a10 10 0 0 1 0 20M12 2a10 10 0 0 0 0 20" />
-                  </svg>
-                </div>
-                <div className="hidden sm:block">
-                  <span className="text-base font-black text-[#03185D] tracking-tight block leading-tight">
-                    Diners Club
-                  </span>
-                  <span className="text-[9px] tracking-widest uppercase font-semibold text-[#656565]">
-                    International
-                  </span>
-                </div>
+              <div className="flex items-center">
+                <img
+                  src={getAssetPath("logos/diners-logo.png")}
+                  alt="Diners Club International"
+                  className="h-8 w-auto object-contain"
+                />
               </div>
 
               {/* Separador Vertical Secundario */}
@@ -232,9 +201,11 @@ export default function Home() {
 
               {/* Logo Aliado Fiduciario RCB */}
               <div className="hidden md:flex items-center">
-                <span className="text-[11px] font-black text-[#03185D] tracking-wider uppercase bg-[#F8FAFC] px-2.5 py-1 rounded border border-[#E2E8F0]">
-                  Raúl Coka Barriga
-                </span>
+                <img
+                  src={getAssetPath("logos/rcb-logo.webp")}
+                  alt="Raúl Coka Barriga"
+                  className="h-7 w-auto object-contain"
+                />
               </div>
             </div>
 
@@ -266,17 +237,16 @@ export default function Home() {
         {/* ========================================================
             2. HERO SECTION (Fiel a REINVENTORS PAD B2:C5 & D3:D5)
            ======================================================== */}
-        <section className="relative pt-12 pb-16 lg:pt-20 lg:pb-24 border-b border-[#E2E8F0] overflow-hidden bg-white">
-          {/* Background image container with light fade */}
-          <div
-            className="absolute inset-0 z-0 bg-cover bg-right sm:bg-center opacity-25"
-            style={{
-              backgroundImage: `url('${getAssetPath(
-                "images/diners/reinventors_pad_hero.jpg"
-              )}')`,
-            }}
-          />
-          <div className="absolute inset-0 z-0 bg-gradient-to-r from-white via-white/95 to-white/70" />
+        <section
+          className="relative pt-12 pb-16 lg:pt-20 lg:pb-24 border-b border-[#E2E8F0] overflow-hidden bg-white"
+          style={{
+            backgroundImage: `linear-gradient(to right, #FFFFFF 0%, rgba(255,255,255,0.96) 45%, rgba(255,255,255,0.55) 70%, rgba(255,255,255,0.15) 100%), url('${getAssetPath(
+              "assets/reinventors_pad_hero.jpg"
+            )}')`,
+            backgroundSize: "cover",
+            backgroundPosition: "right center",
+          }}
+        >
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -358,13 +328,12 @@ export default function Home() {
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-[#091829] group">
                   <div className="aspect-video w-full relative flex flex-col items-center justify-center text-white p-6 overflow-hidden">
                     {/* Poster Image */}
-                    <Image
+                    <img
                       src={getAssetPath(
-                        "images/diners/reinventors_pad_video_poster.jpg"
+                        "assets/reinventors_pad_video_poster.jpg"
                       )}
                       alt="Video Explicativo Reinventors PAD"
-                      fill
-                      className="object-cover opacity-65 group-hover:scale-105 transition-transform duration-500"
+                      className="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#03185D]/90 via-[#091829]/40 to-transparent" />
 
@@ -1383,14 +1352,12 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-items-center py-6 border-y border-[#F1F5F9]">
               {/* Logo UIDE (B18) */}
               <div className="flex flex-col items-center">
-                <div className="h-14 px-6 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center font-black text-lg text-[#910048] tracking-tight">
-                  <span className="text-2xl font-black text-[#910048] mr-1.5">
-                    UIDE
-                  </span>
-                  <span className="text-[9px] text-[#656565] border-l border-[#CBD5E1] pl-1.5 leading-tight font-sans">
-                    powered by<br />
-                    <strong className="text-[#03185D]">ASU</strong>
-                  </span>
+                <div className="h-16 px-6 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center">
+                  <img
+                    src={getAssetPath("logos/uide-logo.webp")}
+                    alt="Logo UIDE powered by ASU"
+                    className="h-10 w-auto object-contain"
+                  />
                 </div>
                 <span className="text-[10px] font-mono text-[#94A3B8] mt-2">
                   Asset Oficial: <strong>220 × 65 px</strong>
@@ -1399,18 +1366,12 @@ export default function Home() {
 
               {/* Logo Diners (C18) */}
               <div className="flex flex-col items-center">
-                <div className="h-14 px-6 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center font-black text-lg text-[#03185D] tracking-tight">
-                  <svg
-                    className="w-6 h-6 mr-2 text-[#03185D]"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 2a10 10 0 0 1 0 20M12 2a10 10 0 0 0 0 20" />
-                  </svg>
-                  <span>Diners Club</span>
+                <div className="h-16 px-6 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center">
+                  <img
+                    src={getAssetPath("logos/diners-logo.png")}
+                    alt="Logo Diners Club International"
+                    className="h-8 w-auto object-contain"
+                  />
                 </div>
                 <span className="text-[10px] font-mono text-[#94A3B8] mt-2">
                   Asset Oficial: <strong>220 × 60 px</strong>
@@ -1419,8 +1380,12 @@ export default function Home() {
 
               {/* Logo Raul Coka Barriga (D18) */}
               <div className="flex flex-col items-center">
-                <div className="h-14 px-6 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center font-black text-sm text-[#03185D] tracking-wider uppercase">
-                  <span>RAUL COKA BARRIGA</span>
+                <div className="h-16 px-6 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center">
+                  <img
+                    src={getAssetPath("logos/rcb-logo.webp")}
+                    alt="Logo Raúl Coka Barriga"
+                    className="h-8 w-auto object-contain"
+                  />
                 </div>
                 <span className="text-[10px] font-mono text-[#94A3B8] mt-2">
                   Asset Oficial: <strong>200 × 60 px</strong>
