@@ -4,8 +4,6 @@ import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import {
   CAREERS_DATA,
-  FAQ_DATA,
-  UIDE_CAMPUSES,
   getCareersByCampus,
   getCampusExtras,
 } from "@/lib/data";
@@ -13,52 +11,39 @@ import { Career } from "@/lib/types";
 import {
   calculatePadQuote,
   generateAmortizationSchedule,
-  TASA_NOMINAL_ANUAL,
-  RETENCION_SRI,
-  SEGURO_RCB_MENSUAL,
-  MAX_CARGO_MENSUAL,
 } from "@/lib/calculator";
 import {
   Play,
   X,
-  Check,
   ChevronDown,
   Shield,
   ShieldCheck,
   TrendingUp,
-  Sparkles,
-  Award,
   BookOpen,
-  Calendar,
   FileText,
   Mail,
-  User,
-  Phone,
-  Send,
-  HelpCircle,
-  ExternalLink,
-  ChevronRight,
   Info,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { getAssetPath } from "@/lib/paths";
 
 export default function Home() {
-  // Video Modal State
+  // Modal States
   const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [leadModalOpen, setLeadModalOpen] = useState(false);
+  const [leadType, setLeadType] = useState<"ahorro" | "asesoria">("ahorro");
 
-  // Campus & Career Selection
-  const [selectedCampus, setSelectedCampus] = useState<string>("Quito");
-  const [selectedCareerId, setSelectedCareerId] = useState<string>(
-    CAREERS_DATA[0].id
-  );
-  const [applyPadScholarship, setApplyPadScholarship] = useState<boolean>(false);
-
-  // Filtered Careers
+  // Career Selection (UIO Pregrado)
+  const selectedCampus = "Quito"; // Fiel al wireframe: "Menú despegable carreras pregrado UIO"
   const availableCareers = useMemo(() => {
     const list = getCareersByCampus(selectedCampus);
     return list.length > 0 ? list : CAREERS_DATA;
   }, [selectedCampus]);
+
+  const [selectedCareerId, setSelectedCareerId] = useState<string>(
+    availableCareers[0]?.id || "medicina"
+  );
+  const [applyPadScholarship, setApplyPadScholarship] = useState<boolean>(false);
 
   const selectedCareer = useMemo(() => {
     const found = availableCareers.find((c) => c.id === selectedCareerId);
@@ -92,9 +77,6 @@ export default function Home() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   // Lead Form State
-  const [conversionType, setConversionType] = useState<"ahorro" | "asesoria">(
-    "ahorro"
-  );
   const [isDinersMember, setIsDinersMember] = useState<string>("si");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [formData, setFormData] = useState({
@@ -137,19 +119,10 @@ export default function Home() {
     return generateAmortizationSchedule(effectiveCareerTuition, childAge, 6);
   }, [effectiveCareerTuition, childAge]);
 
-  const handleCampusChange = (campus: string) => {
-    setSelectedCampus(campus);
-    const list = getCareersByCampus(campus);
-    if (list.length > 0) {
-      setSelectedCareerId(list[0].id);
-    }
-  };
-
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+  const openLeadModal = (type: "ahorro" | "asesoria") => {
+    setLeadType(type);
+    setIsSubmitted(false);
+    setLeadModalOpen(true);
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -166,194 +139,90 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#313131] flex flex-col antialiased selection:bg-[#4C71FC] selection:text-white">
-      {/* ========================================================
-          1. TOP BAR DE MARCA (Modo Claro & Co-Branding UIDE x Diners)
-         ======================================================== */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#E2E8F0] shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Co-Branding Oficial UIDE x Diners Club (Lineamientos Pág. 9) */}
-            <div className="flex items-center gap-3 sm:gap-6">
-              {/* Logo UIDE con Afiliación ASU */}
-              <div className="flex items-center">
-                <img
-                  src={getAssetPath("logos/uide-logo.webp")}
-                  alt="UIDE powered by Arizona State University"
-                  className="h-10 w-auto object-contain"
-                />
-              </div>
-
-              {/* Separador Vertical Oficial */}
-              <div className="h-8 w-px bg-[#CBD5E1]" />
-
-              {/* Logo Diners Club International */}
-              <div className="flex items-center">
-                <img
-                  src={getAssetPath("logos/diners-logo.png")}
-                  alt="Diners Club International"
-                  className="h-8 w-auto object-contain"
-                />
-              </div>
-
-              {/* Separador Vertical Secundario */}
-              <div className="hidden md:block h-8 w-px bg-[#CBD5E1]" />
-
-              {/* Logo Aliado Fiduciario RCB */}
-              <div className="hidden md:flex items-center">
-                <img
-                  src={getAssetPath("logos/rcb-logo.webp")}
-                  alt="Raúl Coka Barriga"
-                  className="h-7 w-auto object-contain"
-                />
-              </div>
-            </div>
-
-            {/* CTAs en Azul Diners Claro */}
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => scrollToSection("cotizador")}
-                className="hidden lg:inline-flex items-center justify-center px-5 py-2.5 rounded-full text-xs font-bold tracking-wider uppercase diners-btn-secondary cursor-pointer"
-              >
-                Simular Ahorro
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setConversionType("ahorro");
-                  scrollToSection("contacto-form");
-                }}
-                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-bold tracking-wider uppercase diners-btn-primary shadow-xs cursor-pointer"
-              >
-                Quiero mi Plan
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen bg-white text-[#313131] flex flex-col antialiased selection:bg-[#4C71FC] selection:text-white font-poppins">
       <main className="flex-1">
         {/* ========================================================
-            2. HERO SECTION (Fiel a REINVENTORS PAD B2:C5 & D3:D5)
+            FILA B2:D5: REINVENTORS PAD & VIDEO EXPLICATIVO
            ======================================================== */}
         <section
-          className="relative min-h-[640px] lg:min-h-[740px] flex items-center border-b border-[#E2E8F0] overflow-hidden bg-[#F8FAFC]"
+          className="relative min-h-[640px] lg:min-h-[720px] flex flex-col justify-between border-b border-[#E2E8F0] overflow-hidden bg-[#F8FAFC]"
           style={{
             backgroundImage: `url('${getAssetPath("assets/reinventors_pad_hero.jpg")}')`,
             backgroundSize: "cover",
-            backgroundPosition: "right 18% center",
+            backgroundPosition: "center 28%",
           }}
         >
-          {/* Subtle atmospheric vignette only on left edge to frame the card, leaving the family 100% bright and clear */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/40 to-transparent pointer-events-none" />
+          {/* Sutil viñeta para asegurar legibilidad manteniendo 100% visible la fotografía de la familia */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/40 to-white/90 pointer-events-none" />
 
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Columna Izquierda: Tarjeta Editorial Glassmorphic */}
-              <div className="lg:col-span-7 xl:col-span-6">
-                <div className="bg-white/94 backdrop-blur-xl p-8 sm:p-10 rounded-3xl border border-white/85 shadow-[0_25px_60px_-15px_rgba(3,24,93,0.16)] space-y-6">
-                  {/* Co-Branding Tag */}
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBF0FF] text-[#03185D] text-xs font-black tracking-wider uppercase border border-[#D5E2FF]">
-                    <span className="text-[#910048] font-black">UIDE</span>
-                    <span className="text-[#656565] text-[10px]">✕</span>
-                    <span className="text-[#03185D] font-black">DINERS CLUB</span>
-                    <span className="text-[#2952E8] ml-1">● Programa de Ahorro Futuro</span>
-                  </div>
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14 w-full flex flex-col justify-between flex-1">
+            {/* B2:D2: Centrado sobre las 3 columnas */}
+            <div className="text-center max-w-4xl mx-auto mb-10">
+              <span className="inline-block px-5 py-1.5 rounded-full bg-[#03185D] text-white text-xs sm:text-sm font-black tracking-widest uppercase mb-4 shadow-sm">
+                REINVENTORS PAD
+              </span>
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#03185D] tracking-tight uppercase leading-tight drop-shadow-xs">
+                El futuro de tus hijos lo reiventas desde hoy
+              </h1>
+            </div>
 
-                  {/* B2: REINVENTORS PAD */}
-                  <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-black text-[#03185D] tracking-tight leading-[1.06]">
-                    REINVENTORS PAD
-                  </h1>
-
-                  {/* Subtítulo B2 */}
-                  <p className="text-lg sm:text-xl font-bold text-[#2952E8] leading-snug">
-                    El futuro de tus hijos lo reiventas desde hoy
+            {/* B3:D5: Fila con Columna B:C (Texto editorial) y Columna D (VIDEO EXPLICATIVO) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-auto">
+              {/* Col B:C (Spans 2 columns / 8 de 12) */}
+              <div className="lg:col-span-8">
+                <div className="bg-white/94 backdrop-blur-xl p-8 sm:p-10 rounded-3xl border border-white/85 shadow-[0_20px_50px_-15px_rgba(3,24,93,0.18)] space-y-4">
+                  <p className="text-base sm:text-xl text-[#03185D] leading-relaxed font-semibold border-l-4 border-[#2952E8] pl-5 py-1">
+                    &ldquo;Reinventors PAD es un programa de ahorro educativo en alianza entre UIDE, Diners Club y RCB que permite a las familias planificar el futuro universitario de sus hijos mientras acceden a experiencias de desarrollo personal, académico y familiar&rdquo;
                   </p>
 
-                  {/* Lead Paragraph B3:C5 */}
-                  <p className="text-sm sm:text-base text-[#4A5568] leading-relaxed border-l-4 border-[#2952E8] pl-4 py-1">
-                    &ldquo;Reinventors PAD es un programa de ahorro educativo en alianza
-                    entre UIDE, Diners Club y RCB que permite a las familias planificar
-                    el futuro universitario de sus hijos mientras acceden a
-                    experiencias de desarrollo personal, académico y familiar&rdquo;
-                  </p>
-
-                  {/* Clave Fiduciaria: NO es tarjeta de crédito */}
-                  <div className="p-3.5 rounded-2xl bg-[#F0FDF4] border border-[#BBF7D0] flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#16A34A] flex items-center justify-center text-white shrink-0 shadow-xs">
-                      <ShieldCheck className="w-4 h-4" />
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#E2E8F0]/70 text-xs text-[#656565]">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" />
+                      <span className="font-semibold text-[#03185D]">
+                        Fideicomiso Educativo Autónomo Raúl Coka Barriga · Diners Club · UIDE
+                      </span>
                     </div>
-                    <p className="text-xs text-[#166534] font-medium leading-relaxed">
-                      <strong>Fondo Garantizado de Ahorro Futuro:</strong> No es una
-                      tarjeta de crédito ni instrumento de endeudamiento. Es un fideicomiso
-                      mercantil autónomo y previsor para blindar la colegiatura superior
-                      de tus hijos.
-                    </p>
-                  </div>
-
-                  {/* CTAs B15:D15 */}
-                  <div className="flex flex-wrap gap-3 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setConversionType("ahorro");
-                        scrollToSection("contacto-form");
-                      }}
-                      className="px-7 py-3.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider diners-btn-primary shadow-sm cursor-pointer"
-                    >
-                      Quiero comenzar mi plan de ahorro
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setConversionType("asesoria");
-                        scrollToSection("contacto-form");
-                      }}
-                      className="px-7 py-3.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider diners-btn-secondary cursor-pointer"
-                    >
-                      Quiero asesoría personalizada
-                    </button>
-                  </div>
-
-                  {/* Image Dimension Badge for Hero asset */}
-                  <div className="pt-1 flex items-center gap-2 text-[11px] font-mono text-[#656565]">
-                    <span className="w-2 h-2 rounded-full bg-[#2952E8]" />
-                    <span>
-                      Asset Hero Lifestyle: <strong>1920 × 850 px</strong> (Desktop) · 768 × 600 px (Tablet) · 420 × 500 px (Móvil)
+                    <span className="font-mono text-[11px] text-[#94A3B8]">
+                      Asset Hero Lifestyle: 1920 × 850 px
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Columna Derecha: La fotografía de la familia queda totalmente descubierta y visible, con disparador del Video Explicativo */}
-              <div className="lg:col-span-5 xl:col-span-6 flex flex-col justify-end items-end h-full pt-6 lg:pt-0">
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setVideoModalOpen(true)}
-                    className="group flex items-center gap-4 p-3 pr-6 rounded-2xl bg-white/94 backdrop-blur-md border border-white/80 shadow-2xl hover:bg-[#03185D] hover:text-white transition-all transform hover:scale-105 duration-200 cursor-pointer"
-                    aria-label="Reproducir Video Explicativo"
-                  >
-                    <div className="w-13 h-13 rounded-xl bg-[#2952E8] group-hover:bg-white text-white group-hover:text-[#03185D] flex items-center justify-center shadow-md transition-colors shrink-0">
-                      <Play className="w-6 h-6 fill-current translate-x-0.5" />
-                    </div>
-                    <div className="text-left">
-                      <span className="text-xs font-black tracking-widest uppercase block text-[#03185D] group-hover:text-white">
-                        VIDEO EXPLICATIVO
-                      </span>
-                      <span className="text-[11px] text-[#656565] group-hover:text-white/80 block mt-0.5">
-                        Alianza UIDE + Diners Club + RCB (2 min)
-                      </span>
-                      <span className="text-[10px] text-[#2952E8] group-hover:text-white/90 font-bold block mt-0.5">
-                        Ver reproducción en video →
-                      </span>
-                    </div>
-                  </button>
+              {/* Col D (Spans 1 column / 4 de 12): VIDEO EXPLICATIVO */}
+              <div className="lg:col-span-4 flex flex-col justify-center">
+                <div
+                  onClick={() => setVideoModalOpen(true)}
+                  className="group relative rounded-3xl overflow-hidden shadow-2xl border-2 border-white/90 cursor-pointer aspect-video bg-[#03185D] flex items-center justify-center transform transition-all duration-300 hover:scale-[1.02]"
+                  style={{
+                    backgroundImage: `url('${getAssetPath("assets/reinventors_pad_video_poster.jpg")}')`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Reproducir VIDEO EXPLICATIVO"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") setVideoModalOpen(true);
+                  }}
+                >
+                  <div className="absolute inset-0 bg-[#03185D]/40 group-hover:bg-[#03185D]/25 transition-colors" />
 
-                  <div className="mt-2 text-right">
+                  <div className="relative z-10 flex flex-col items-center text-center p-4">
+                    <div className="w-16 h-16 rounded-full bg-white text-[#03185D] group-hover:bg-[#2952E8] group-hover:text-white flex items-center justify-center shadow-2xl transition-all transform group-hover:scale-110 mb-3">
+                      <Play className="w-7 h-7 fill-current translate-x-0.5" />
+                    </div>
+                    <span className="text-sm font-black tracking-widest text-white uppercase drop-shadow-md">
+                      VIDEO EXPLICATIVO
+                    </span>
+                    <span className="text-[11px] text-white/90 font-medium mt-1">
+                      Conoce el programa en 2 min
+                    </span>
+                  </div>
+
+                  <div className="absolute bottom-2 right-2">
                     <span className="text-[10px] font-mono bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded">
-                      Poster Video: 800 × 450 px (16:9)
+                      Poster: 800 × 450 px (16:9)
                     </span>
                   </div>
                 </div>
@@ -363,34 +232,25 @@ export default function Home() {
         </section>
 
         {/* ========================================================
-            3. PILARES DEL PROGRAMA (Fiel a Fila 6: B6:D7)
+            FILA B6:D7: 3 COLUMNAS DE PILARES DEL PROGRAMA
            ======================================================== */}
         <section className="py-16 bg-[#F8FAFC] border-b border-[#E2E8F0]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-12">
-              <span className="pill-badge bg-white text-[#03185D] border border-[#E2E8F0] shadow-xs mb-3">
-                Pilares del Programa
-              </span>
-              <h2 className="text-3xl font-black text-[#03185D] tracking-tight">
-                Un modelo integral para el futuro de tu familia
-              </h2>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Pilar 1: B6:B7 */}
+              {/* Col B (B6:B7): SEGURIDAD FINANCIERA */}
               <div className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-[#EBF0FF] text-[#4C71FC] flex items-center justify-center mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center mb-6 shadow-xs">
                     <Shield className="w-7 h-7" />
                   </div>
                   <h3 className="text-lg font-black text-[#03185D] uppercase tracking-wide mb-3">
                     SEGURIDAD FINANCIERA
                   </h3>
-                  <p className="text-sm text-[#4A5568] leading-relaxed">
+                  <p className="text-sm text-[#4A5568] leading-relaxed font-medium">
                     Un fondo para educación superior de tus hijos
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-xs font-semibold text-[#4C71FC] flex items-center justify-between">
+                <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-xs font-semibold text-[#2952E8] flex items-center justify-between">
                   <span>Fideicomiso & Respaldo RCB</span>
                   <span className="text-[10px] font-mono text-[#94A3B8]">
                     Icono: 80 × 80 px
@@ -398,20 +258,20 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Pilar 2: C6:C7 */}
+              {/* Col C (C6:C7): DESARROLLO INTEGRAL */}
               <div className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-[#EBF0FF] text-[#4C71FC] flex items-center justify-center mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center mb-6 shadow-xs">
                     <TrendingUp className="w-7 h-7" />
                   </div>
                   <h3 className="text-lg font-black text-[#03185D] uppercase tracking-wide mb-3">
                     DESARROLLO INTEGRAL
                   </h3>
-                  <p className="text-sm text-[#4A5568] leading-relaxed">
+                  <p className="text-sm text-[#4A5568] leading-relaxed font-medium">
                     Actividades, talleres y experiencias para potenciar su talento
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-xs font-semibold text-[#4C71FC] flex items-center justify-between">
+                <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-xs font-semibold text-[#2952E8] flex items-center justify-between">
                   <span>Acompañamiento vocacional continuo</span>
                   <span className="text-[10px] font-mono text-[#94A3B8]">
                     Icono: 80 × 80 px
@@ -419,20 +279,20 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Pilar 3: D6:D7 */}
+              {/* Col D (D6:D7): VINCULACIÓN UNIVERSITARIA TEMPRANA */}
               <div className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-[#EBF0FF] text-[#4C71FC] flex items-center justify-center mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center mb-6 shadow-xs">
                     <BookOpen className="w-7 h-7" />
                   </div>
                   <h3 className="text-lg font-black text-[#03185D] uppercase tracking-wide mb-3">
                     VINCULACIÓN UNIVERSITARIA TEMPRANA
                   </h3>
-                  <p className="text-sm text-[#4A5568] leading-relaxed">
+                  <p className="text-sm text-[#4A5568] leading-relaxed font-medium">
                     Acceso progresivo al ecosistema de la universidad #1 en innovación de Ecuador
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-xs font-semibold text-[#4C71FC] flex items-center justify-between">
+                <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-xs font-semibold text-[#2952E8] flex items-center justify-between">
                   <span>Experiencia Arizona State University</span>
                   <span className="text-[10px] font-mono text-[#94A3B8]">
                     Icono: 80 × 80 px
@@ -444,32 +304,28 @@ export default function Home() {
         </section>
 
         {/* ========================================================
-            4. NUESTRAS CARRERAS (Fiel a Fila 8-10: B8:D10)
+            FILA B8:D10: NUESTRAS CARRERAS
            ======================================================== */}
         <section id="carreras" className="py-20 bg-white border-b border-[#E2E8F0]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Título de Sección B8:D8 */}
             <div className="max-w-4xl mx-auto text-center mb-14">
-              <h2 className="text-3xl sm:text-4xl font-black text-[#03185D] tracking-tight">
+              <h2 className="text-3xl sm:text-4xl font-black text-[#03185D] tracking-tight uppercase leading-snug">
                 Nuestras Carreras: una experiencia universitaria que transforma el futuro de tu hijo/a
               </h2>
-              <div className="w-20 h-1 bg-[#4C71FC] mx-auto mt-4 rounded-full" />
+              <div className="w-20 h-1 bg-[#2952E8] mx-auto mt-4 rounded-full" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-              {/* Columna Izquierda: Copy Institucional B9:B10 + 5 Viñetas */}
-              <div className="lg:col-span-6 space-y-6">
-                <p className="text-base text-[#4A5568] leading-relaxed">
-                  &ldquo;En la UIDE, no solo eliges una carrera, eliges una formación
-                  con visión global. Tu hijo/a accederá a programas académicos
-                  conectados con las tendencias del mundo, experiencias internacionales,
-                  certificaciones de valor profesional y oportunidades únicas a través
-                  de alianzas estratégicas como <strong>Arizona State University (ASU)</strong>.
-                  Porque en la UIDE no nos preparamos para el futuro: lo reinventamos.&rdquo;
+            {/* 3 Columnas Fieles a la Fila 9-10 */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              {/* Col B (B9:B10): Copy Institucional + 5 Viñetas */}
+              <div className="lg:col-span-5 space-y-5">
+                <p className="text-sm sm:text-base text-[#4A5568] leading-relaxed">
+                  &ldquo;En la UIDE, no solo eliges una carrera, eliges una formación con visión global. Tu hijo/a accederá a programas académicos conectados con las tendencias del mundo, experiencias internacionales, certificaciones de valor profesional y oportunidades únicas a través de alianzas estratégicas como <strong>Arizona State University (ASU)</strong>. Porque en la UIDE no nos preparamos para el futuro: lo reinventamos.&rdquo;
                 </p>
 
-                {/* 5 Viñetas Oficiales (✔) */}
-                <div className="space-y-3.5 bg-[#F8FAFC] p-6 rounded-2xl border border-[#E2E8F0]">
+                {/* 5 Viñetas Oficiales (✔ con SVG limpio) */}
+                <div className="space-y-3 bg-[#F8FAFC] p-6 rounded-2xl border border-[#E2E8F0]">
                   {[
                     "Titulación internacional",
                     "Alianzas globales y experiencia ASU",
@@ -483,95 +339,105 @@ export default function Home() {
                           <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
                         </svg>
                       </div>
-                      <span className="text-sm font-semibold text-[#03185D]">
+                      <span className="text-sm font-bold text-[#03185D]">
                         {bullet}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                {/* Asset Dimension Tag */}
                 <div className="flex items-center gap-2 text-[11px] font-mono text-[#656565] bg-[#F1F5F9] px-3.5 py-2 rounded-lg">
-                  <Info className="w-4 h-4 text-[#4C71FC]" />
+                  <Info className="w-4 h-4 text-[#2952E8]" />
                   <span>
-                    Asset Imagen Carreras / Campus: <strong>600 × 400 px</strong> (Ratio 3:2)
+                    Asset Carreras / Campus: <strong>600 × 400 px</strong>
                   </span>
                 </div>
               </div>
 
-              {/* Columna Derecha: C9:D10 Menú desplegable carreras pregrado UIO & Valor promedio carrera */}
-              <div className="lg:col-span-6 bg-white p-8 rounded-2xl border-2 border-[#D5E2FF] shadow-lg space-y-6">
-                <div className="flex flex-wrap items-center justify-between pb-4 border-b border-[#E2E8F0] gap-2">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#4C71FC]">
-                      Pregrado UIDE · Catálogo Completo
-                    </span>
-                    <h3 className="text-xl font-black text-[#03185D]">
-                      Explora Carreras y Proyección
-                    </h3>
-                  </div>
+              {/* Col C (C9:C10): Menú despegable carreras pregrado UIO */}
+              <div className="lg:col-span-3 bg-[#F8FAFC] p-6 rounded-2xl border border-[#CBD5E1] space-y-4">
+                <span className="text-xs font-black uppercase tracking-wider text-[#2952E8] block">
+                  Catálogo Pregrado UIO
+                </span>
+                <label
+                  htmlFor="career-dropdown-uio"
+                  className="block text-sm font-black uppercase tracking-tight text-[#03185D]"
+                >
+                  Menú despegable carreras pregrado UIO:
+                </label>
 
-                  {/* Campus Selector */}
-                  <div className="flex gap-1 bg-[#F1F5F9] p-1 rounded-xl">
-                    {UIDE_CAMPUSES.map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => handleCampusChange(c)}
-                        className={`px-3 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                          selectedCampus === c
-                            ? "bg-[#03185D] text-white"
-                            : "text-[#656565] hover:text-[#03185D]"
-                        }`}
-                      >
-                        {c}
-                      </button>
+                <div className="relative">
+                  <select
+                    id="career-dropdown-uio"
+                    value={selectedCareerId}
+                    onChange={(e) => setSelectedCareerId(e.target.value)}
+                    className="w-full h-12 pl-4 pr-10 rounded-xl border border-[#CBD5E1] bg-white text-[#03185D] font-bold text-sm focus:outline-none focus:ring-2 focus:ring-[#2952E8] appearance-none cursor-pointer shadow-xs"
+                  >
+                    {availableCareers.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} ({c.semesters} sem.)
+                      </option>
                     ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#03185D]">
+                    <ChevronDown className="w-4 h-4" />
                   </div>
                 </div>
 
-                {/* Dropdown: Menú desplegable carreras pregrado */}
+                <div className="p-4 rounded-xl bg-white border border-[#E2E8F0] space-y-2 text-xs">
+                  <div className="font-bold text-[#03185D]">
+                    {selectedCareer.name}
+                  </div>
+                  <div className="text-[#656565]">
+                    {selectedCareer.faculty}
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#16A34A] bg-[#DCFCE7] px-2.5 py-1 rounded-full">
+                    <span>ASU Pathway: {selectedCareer.asuPathway}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Col D (D9:D10): Valor promedio carrera */}
+              <div className="lg:col-span-4 bg-gradient-to-br from-white to-[#EFF6FF] p-6 sm:p-7 rounded-2xl border-2 border-[#BFDBFE] shadow-md space-y-4">
+                <div className="flex justify-between items-center pb-2 border-b border-[#DBEAFE]">
+                  <span className="text-xs font-black uppercase tracking-wider text-[#03185D]">
+                    Valor promedio carrera
+                  </span>
+                  <span className="text-[11px] font-bold text-[#2952E8] bg-[#EBF0FF] px-2.5 py-0.5 rounded-full">
+                    UIDE Quito
+                  </span>
+                </div>
+
                 <div>
-                  <label
-                    htmlFor="career-select"
-                    className="block text-xs font-bold uppercase tracking-wider text-[#313131] mb-2"
-                  >
-                    Menú desplegable carreras pregrado {selectedCampus}:
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="career-select"
-                      value={selectedCareerId}
-                      onChange={(e) => setSelectedCareerId(e.target.value)}
-                      className="w-full h-12 pl-4 pr-10 rounded-xl border border-[#CBD5E1] bg-[#F8FAFC] text-[#03185D] font-bold text-sm focus:outline-none focus:ring-2 focus:ring-[#4C71FC] appearance-none cursor-pointer"
-                    >
-                      {availableCareers.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name} ({c.faculty}) — {c.semesters} semestres
-                        </option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#03185D]">
-                      <ChevronDown className="w-4 h-4" />
-                    </div>
+                  <span className="text-xs text-[#656565] block uppercase font-bold">
+                    Inversión referencial total:
+                  </span>
+                  <div className="text-3xl sm:text-4xl font-black text-[#03185D] tracking-tight">
+                    ${effectiveCareerTuition.toLocaleString("en-US")}
+                  </div>
+                  <div className="text-xs text-[#2952E8] font-bold mt-1">
+                    ${Math.round(effectiveCareerTuition / selectedCareer.semesters).toLocaleString("en-US")} / semestre
+                    <span className="text-[#656565] font-normal ml-1">
+                      ({selectedCareer.semesters} semestres)
+                    </span>
                   </div>
                 </div>
 
                 {/* Toggle Beca PAD UIDE */}
-                <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-white border border-[#E2E8F0]">
                   <div>
                     <span className="text-xs font-bold text-[#03185D] block">
                       Aplicar Beca Reinventors PAD (21% - 25%)
                     </span>
-                    <span className="text-[11px] text-[#656565]">
-                      Beneficio preferencial exclusivo para socios Diners Club
+                    <span className="text-[10px] text-[#656565]">
+                      Beneficio preferencial socios Diners Club
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setApplyPadScholarship(!applyPadScholarship)}
                     className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors ${
-                      applyPadScholarship ? "bg-[#28A745]" : "bg-[#CBD5E1]"
+                      applyPadScholarship ? "bg-[#16A34A]" : "bg-[#CBD5E1]"
                     }`}
                   >
                     <div
@@ -582,54 +448,19 @@ export default function Home() {
                   </button>
                 </div>
 
-                {/* Dynamic Display: Valor promedio carrera */}
-                <div className="p-6 rounded-xl bg-gradient-to-br from-[#F8FAFC] to-[#EFF6FF] border border-[#BFDBFE]">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#656565] block mb-1">
-                    Valor promedio carrera estimado:
-                  </span>
-                  <div className="flex items-baseline justify-between gap-4">
-                    <div>
-                      <span className="text-3xl sm:text-4xl font-black text-[#03185D] tracking-tight">
-                        ${effectiveCareerTuition.toLocaleString("en-US")}
-                      </span>
-                      <span className="text-xs text-[#656565] block mt-0.5 font-medium">
-                        {applyPadScholarship
-                          ? "Inversión total con Beca PAD incluida"
-                          : "Inversión referencial total estimada"}
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-lg font-bold text-[#4C71FC] block">
-                        $
-                        {Math.round(
-                          effectiveCareerTuition / selectedCareer.semesters
-                        ).toLocaleString("en-US")}{" "}
-                        / semestre
-                      </span>
-                      <span className="text-xs text-[#656565] font-medium">
-                        {selectedCareer.semesters} semestres
-                      </span>
-                    </div>
+                {/* Aranceles Complementarios UIDE */}
+                <div className="pt-2 border-t border-[#DBEAFE] space-y-1 text-xs text-[#1E40AF]">
+                  <div className="flex justify-between">
+                    <span>• Consejo Estudiantil (anual):</span>
+                    <span className="font-bold">${campusExtras.consejoEstudiantil} USD</span>
                   </div>
-
-                  {/* Complementary Fees breakdown */}
-                  <div className="mt-4 pt-3 border-t border-[#DBEAFE] space-y-1 text-xs text-[#1E40AF]">
-                    <div className="flex justify-between">
-                      <span>• Consejo Estudiantil (anual):</span>
-                      <span className="font-bold">
-                        ${campusExtras.consejoEstudiantil} USD
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>• Seguro Universitario (semestral):</span>
-                      <span className="font-bold">
-                        ${campusExtras.seguroUniversitario} USD
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-[#656565] pt-1 italic">
-                      * Precios aproximados oficiales UIDE. Para congelar aranceles y acceder a beneficios, inicia tu plan en el cotizador.
-                    </p>
+                  <div className="flex justify-between">
+                    <span>• Seguro Universitario (semestral):</span>
+                    <span className="font-bold">${campusExtras.seguroUniversitario} USD</span>
                   </div>
+                  <p className="text-[10px] text-[#656565] pt-1 italic">
+                    * Precios aproximados oficiales UIDE sujetos a congelamiento arancelario con Reinventors PAD.
+                  </p>
                 </div>
               </div>
             </div>
@@ -637,21 +468,21 @@ export default function Home() {
         </section>
 
         {/* ========================================================
-            5. ¿POR QUÉ EMPEZAR HOY? + COTIZADOR (Fiel a Fila 11-13)
+            FILA B11:D13: ¿POR QUÉ EMPEZAR HOY?
            ======================================================== */}
         <section id="cotizador" className="py-20 bg-[#F8FAFC] border-b border-[#E2E8F0]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-14">
-              <span className="pill-badge bg-white text-[#4C71FC] border border-[#CBD5E1] shadow-xs mb-3">
-                Planificación Financiera
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-black text-[#03185D] tracking-tight">
+            {/* Título de Sección B11:D11 */}
+            <div className="max-w-3xl mx-auto text-center mb-14">
+              <h2 className="text-3xl sm:text-4xl font-black text-[#03185D] tracking-tight uppercase">
                 ¿Por qué empezar hoy?
               </h2>
+              <div className="w-20 h-1 bg-[#2952E8] mx-auto mt-4 rounded-full" />
             </div>
 
+            {/* 3 Columnas Fieles a B12:D13 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-              {/* Columna 1: Si empiezas temprano (B12:B13) */}
+              {/* Col B (B12:B13): Si empiezas temprano */}
               <div className="lg:col-span-3 bg-white rounded-2xl p-6 border-2 border-[#BBF7D0] shadow-xs flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#E2E8F0]">
@@ -665,46 +496,29 @@ export default function Home() {
                     </h3>
                   </div>
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3 text-sm font-bold text-[#1F2937]">
-                      <div className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
-                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
-                        </svg>
+                    {[
+                      "Menor aporte mensual",
+                      "Mayor fondo acumulado",
+                      "Más años de beneficios",
+                      "Más oportunidades para tu hijo",
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 text-sm font-bold text-[#1F2937]">
+                        <div className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
+                          <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                          </svg>
+                        </div>
+                        <span>{item}</span>
                       </div>
-                      <span>Menor aporte mensual</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm font-bold text-[#1F2937]">
-                      <div className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
-                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
-                        </svg>
-                      </div>
-                      <span>Mayor fondo acumulado</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm font-bold text-[#1F2937]">
-                      <div className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
-                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
-                        </svg>
-                      </div>
-                      <span>Más años de beneficios</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm font-bold text-[#1F2937]">
-                      <div className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
-                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
-                        </svg>
-                      </div>
-                      <span>Más oportunidades para tu hijo</span>
-                    </div>
+                    ))}
                   </div>
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-[11px] text-[#15803D] font-semibold bg-[#F0FDF4] p-3 rounded-lg">
-                  Impacto: El rendimiento fiduciario y los aportes programados reducen hasta un 40% el desembolso total de la carrera.
+                  Impacto: Rendimiento fiduciario compuesto que reduce significativamente el esfuerzo financiero familiar.
                 </div>
               </div>
 
-              {/* Columna 2: Si esperas (C12:C13) */}
+              {/* Col C (C12:C13): Si esperas */}
               <div className="lg:col-span-3 bg-white rounded-2xl p-6 border-2 border-[#FECACA] shadow-xs flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#E2E8F0]">
@@ -718,59 +532,50 @@ export default function Home() {
                     </h3>
                   </div>
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3 text-sm font-bold text-[#374151]">
-                      <div className="w-5 h-5 rounded-full bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center shrink-0">
-                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-                          <path d="M3 3L9 9M9 3L3 9" />
-                        </svg>
+                    {[
+                      "Mayor esfuerzo financiero",
+                      "Menos beneficios acumulados",
+                      "Menor tiempo de planificación",
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center gap-3 text-sm font-bold text-[#374151]">
+                        <div className="w-5 h-5 rounded-full bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center shrink-0">
+                          <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                            <path d="M3 3L9 9M9 3L3 9" />
+                          </svg>
+                        </div>
+                        <span>{item}</span>
                       </div>
-                      <span>Mayor esfuerzo financiero</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm font-bold text-[#374151]">
-                      <div className="w-5 h-5 rounded-full bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center shrink-0">
-                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-                          <path d="M3 3L9 9M9 3L3 9" />
-                        </svg>
-                      </div>
-                      <span>Menos beneficios acumulados</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm font-bold text-[#374151]">
-                      <div className="w-5 h-5 rounded-full bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center shrink-0">
-                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-                          <path d="M3 3L9 9M9 3L3 9" />
-                        </svg>
-                      </div>
-                      <span>Menor tiempo de planificación</span>
-                    </div>
+                    ))}
                   </div>
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-[11px] text-[#B91C1C] font-semibold bg-[#FEF2F2] p-3 rounded-lg">
-                  Riesgo: Al llegar el grado de bachillerato, los costos semestrales se deben cubrir de golpe sin fondo de respaldo.
+                  Riesgo: Al llegar el momento universitario, los aranceles completos deben asumirse sin protección fiduciaria.
                 </div>
               </div>
 
-              {/* Columna 3: calcula tu ahorro ahora (D12:D13) */}
-              <div className="lg:col-span-6 bg-white rounded-2xl p-8 border-2 border-[#4C71FC] shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-[#4C71FC] text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-bl-xl">
-                  Simulador Activo
+              {/* Col D (D12:D13): calcula tu ahorro ahora (FORMATO COTIZADOR CORREO ADJUNTO) */}
+              <div className="lg:col-span-6 bg-white rounded-2xl p-7 border-2 border-[#2952E8] shadow-xl relative overflow-hidden">
+                <div className="flex justify-between items-center mb-1">
+                  <h3 className="text-lg sm:text-xl font-black text-[#03185D] uppercase tracking-tight">
+                    calcula tu ahorro ahora
+                  </h3>
+                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-[#EBF0FF] text-[#2952E8]">
+                    Cotizador Oficial
+                  </span>
                 </div>
-
-                <h3 className="text-xl font-black text-[#03185D] mb-1">
-                  calcula tu ahorro ahora
-                </h3>
                 <p className="text-xs text-[#656565] mb-6">
-                  Formato oficial del cotizador: ajusta la edad actual de tu hijo y tu capacidad de ahorro
+                  (FORMATO COTIZADOR CORREO ADJUNTO)
                 </p>
 
                 {/* Sliders Interactivos */}
-                <div className="space-y-6">
-                  {/* Slider 1: Edad del hijo */}
+                <div className="space-y-5">
+                  {/* Slider 1: Edad */}
                   <div>
                     <div className="flex justify-between items-center mb-1.5">
                       <span className="text-xs font-bold uppercase text-[#03185D]">
                         Edad actual de tu hijo/a:
                       </span>
-                      <span className="text-base font-black text-[#4C71FC]">
+                      <span className="text-base font-black text-[#2952E8]">
                         {childAge} {childAge === 1 ? "año" : "años"}
                       </span>
                     </div>
@@ -780,12 +585,12 @@ export default function Home() {
                       max={16}
                       value={childAge}
                       onChange={(e) => setChildAge(parseInt(e.target.value, 10))}
-                      className="w-full h-2 bg-[#E2E8F0] rounded-lg appearance-none cursor-pointer accent-[#4C71FC]"
+                      className="w-full h-2 bg-[#E2E8F0] rounded-lg appearance-none cursor-pointer accent-[#2952E8]"
                     />
                     <div className="flex justify-between text-[10px] text-[#94A3B8] mt-1 font-mono">
-                      <span>1 año (Bebé)</span>
-                      <span>8 años (Escuela)</span>
-                      <span>16 años (Colegio)</span>
+                      <span>1 año</span>
+                      <span>8 años</span>
+                      <span>16 años</span>
                     </div>
                   </div>
 
@@ -795,7 +600,7 @@ export default function Home() {
                       <span className="text-xs font-bold uppercase text-[#03185D]">
                         Aporte mensual programado:
                       </span>
-                      <span className="text-base font-black text-[#4C71FC]">
+                      <span className="text-base font-black text-[#2952E8]">
                         ${monthlyContribution} / mes
                       </span>
                     </div>
@@ -808,7 +613,7 @@ export default function Home() {
                       onChange={(e) =>
                         setMonthlyContribution(parseInt(e.target.value, 10))
                       }
-                      className="w-full h-2 bg-[#E2E8F0] rounded-lg appearance-none cursor-pointer accent-[#4C71FC]"
+                      className="w-full h-2 bg-[#E2E8F0] rounded-lg appearance-none cursor-pointer accent-[#2952E8]"
                     />
                     <div className="flex justify-between text-[10px] text-[#94A3B8] mt-1 font-mono">
                       <span>$50</span>
@@ -831,44 +636,41 @@ export default function Home() {
                       <span className="text-[10px] font-bold uppercase text-[#656565] block">
                         Fondo Total Proyectado:
                       </span>
-                      <span className="text-2xl font-black text-[#28A745]">
+                      <span className="text-2xl font-black text-[#16A34A]">
                         ${projectedFund.toLocaleString("en-US")}
                       </span>
                     </div>
                   </div>
 
-                  {/* Botones de Acción */}
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setConversionType("ahorro");
-                        scrollToSection("contacto-form");
-                      }}
-                      className="flex-1 py-3 rounded-full text-center text-xs font-bold uppercase tracking-wider diners-btn-primary cursor-pointer shadow-sm"
-                    >
-                      Guardar Cotización y Recibir Asesoría
-                    </button>
+                  {/* Botones de Vista Previa del Cotizador Correo Adjunto */}
+                  <div className="flex flex-col sm:flex-row gap-3 pt-1">
                     <button
                       type="button"
                       onClick={() => setShowEmailPreview(!showEmailPreview)}
-                      className="px-5 py-3 rounded-full text-center text-xs font-bold uppercase tracking-wider diners-btn-secondary flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="flex-1 py-3 px-4 rounded-full text-center text-xs font-bold uppercase tracking-wider diners-btn-secondary flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <Mail className="w-4 h-4 text-[#4C71FC]" />
+                      <Mail className="w-4 h-4 text-[#2952E8]" />
                       <span>
                         {showEmailPreview
                           ? "Ocultar Formato Correo"
-                          : "Ver Formato Correo Adjunto"}
+                          : "Ver Formato Cotizador Correo Adjunto"}
                       </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openLeadModal("ahorro")}
+                      className="py-3 px-6 rounded-full text-center text-xs font-bold uppercase tracking-wider diners-btn-primary shadow-sm cursor-pointer"
+                    >
+                      Solicitar Corrida
                     </button>
                   </div>
 
                   {/* Formato Cotizador Correo Adjunto (Desplegable) */}
                   {showEmailPreview && (
-                    <div className="mt-4 p-5 rounded-xl bg-[#F8FAFC] border-2 border-dashed border-[#CBD5E1] text-left space-y-3">
+                    <div className="mt-3 p-5 rounded-xl bg-[#F8FAFC] border-2 border-dashed border-[#CBD5E1] text-left space-y-3">
                       <div className="flex justify-between items-center pb-2 border-b border-[#E2E8F0]">
                         <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-[#28A745]" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" />
                           <span className="text-xs font-black text-[#03185D] uppercase tracking-wider">
                             FORMATO COTIZADOR CORREO ADJUNTO (PDF)
                           </span>
@@ -883,14 +685,14 @@ export default function Home() {
                           <span>
                             Programa: Reinventors PAD (Fideicomiso RCB - Diners Club - UIDE)
                           </span>
-                          <span className="text-[#28A745]">Plan Vigente 2026</span>
+                          <span className="text-[#16A34A]">Plan Vigente 2026</span>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-[11px] text-[#4A5568] py-1 border-y border-[#F1F5F9]">
                           <div>• Edad actual hijo: <strong>{childAge} años</strong></div>
                           <div>• Aporte mensual: <strong>${monthlyContribution} / mes</strong></div>
                           <div>• Años de capitalización: <strong>{savingYears} años ({savingMonths} meses)</strong></div>
                           <div>• Aporte total programado: <strong>${totalCapitalContributed.toLocaleString("en-US")}</strong></div>
-                          <div>• Rendimiento fiduciario est.: <strong className="text-[#28A745]">+${projectedInterestNet.toLocaleString("en-US")}</strong></div>
+                          <div>• Rendimiento fiduciario est.: <strong className="text-[#16A34A]">+${projectedInterestNet.toLocaleString("en-US")}</strong></div>
                           <div>• Fondo total proyectado: <strong className="text-[#03185D]">${projectedFund.toLocaleString("en-US")}</strong></div>
                         </div>
                         <p className="text-[10px] text-[#656565] italic">
@@ -900,12 +702,12 @@ export default function Home() {
                     </div>
                   )}
 
-                  {/* Botón Amortización Desplegable */}
-                  <div className="pt-2 text-center">
+                  {/* Botón Amortización */}
+                  <div className="text-center pt-1">
                     <button
                       type="button"
                       onClick={() => setShowAmortization(!showAmortization)}
-                      className="text-xs font-bold text-[#4C71FC] hover:underline flex items-center justify-center gap-1 mx-auto cursor-pointer"
+                      className="text-xs font-bold text-[#2952E8] hover:underline flex items-center justify-center gap-1 mx-auto cursor-pointer"
                     >
                       <FileText className="w-3.5 h-3.5" />
                       <span>
@@ -917,7 +719,7 @@ export default function Home() {
                   </div>
 
                   {showAmortization && (
-                    <div className="mt-3 overflow-x-auto p-3 bg-white rounded-xl border border-[#CBD5E1] text-[11px]">
+                    <div className="mt-2 overflow-x-auto p-3 bg-white rounded-xl border border-[#CBD5E1] text-[11px]">
                       <div className="flex justify-between font-bold text-[#03185D] mb-2">
                         <span>Meta Carrera: ${effectiveCareerTuition.toLocaleString("en-US")}</span>
                         <span>Cuota Mensual Total: ${careerPadQuote.cuotaTotal} / mes</span>
@@ -941,7 +743,7 @@ export default function Home() {
                               <td className="py-1 font-mono">{row.mes}</td>
                               <td className="py-1">${row.aportePad}</td>
                               <td className="py-1">${row.seguroMensual}</td>
-                              <td className="py-1 text-[#28A745]">
+                              <td className="py-1 text-[#16A34A]">
                                 +${(row.interesMes - row.retencionMes).toFixed(2)}
                               </td>
                               <td className="py-1 font-bold text-right">
@@ -960,28 +762,27 @@ export default function Home() {
         </section>
 
         {/* ========================================================
-            6. PAQUETE BENEFICIOS SOCIOS DINERS (Fiel a Fila 14: B14:D14)
+            FILA B14:D14: PAQUETE BENEFICIOS SOCIOS DINERS
            ======================================================== */}
         <section id="beneficios" className="py-20 bg-white border-b border-[#E2E8F0]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Título de Sección B14:D14 */}
             <div className="text-center max-w-3xl mx-auto mb-12">
-              <h2 className="text-3xl sm:text-4xl font-black text-[#03185D] tracking-tight">
+              <h2 className="text-3xl sm:text-4xl font-black text-[#03185D] tracking-tight uppercase">
                 Paquete beneficios socios diners
               </h2>
-              <p className="text-sm text-[#656565] mt-2">
-                Selecciona cada entidad aliada para conocer las ventajas exclusivas integradas en Reinventors PAD:
-              </p>
+              <div className="w-20 h-1 bg-[#2952E8] mx-auto mt-4 rounded-full" />
             </div>
 
-            {/* Pestañas Interactivas (Tabs: RCB | DINERS CLUB | UIDE) */}
+            {/* 3 Pestañas Fieles a la Fila 14 */}
             <div className="max-w-4xl mx-auto">
-              <div className="flex border-b-2 border-[#E2E8F0] mb-8 justify-center gap-2 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 border-b-2 border-[#E2E8F0] mb-8 gap-2">
                 <button
                   type="button"
                   onClick={() => setActiveTab("rcb")}
-                  className={`px-4 sm:px-8 py-3 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`py-3.5 px-4 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer text-center ${
                     activeTab === "rcb"
-                      ? "border-b-4 border-[#4C71FC] text-[#03185D]"
+                      ? "border-b-4 border-[#2952E8] text-[#03185D] bg-[#F8FAFC] rounded-t-xl"
                       : "border-b-4 border-transparent text-[#94A3B8] hover:text-[#03185D]"
                   }`}
                 >
@@ -990,9 +791,9 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("diners")}
-                  className={`px-4 sm:px-8 py-3 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`py-3.5 px-4 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer text-center ${
                     activeTab === "diners"
-                      ? "border-b-4 border-[#4C71FC] text-[#03185D]"
+                      ? "border-b-4 border-[#2952E8] text-[#03185D] bg-[#F8FAFC] rounded-t-xl"
                       : "border-b-4 border-transparent text-[#94A3B8] hover:text-[#03185D]"
                   }`}
                 >
@@ -1001,9 +802,9 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("uide")}
-                  className={`px-4 sm:px-8 py-3 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`py-3.5 px-4 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer text-center ${
                     activeTab === "uide"
-                      ? "border-b-4 border-[#4C71FC] text-[#03185D]"
+                      ? "border-b-4 border-[#2952E8] text-[#03185D] bg-[#F8FAFC] rounded-t-xl"
                       : "border-b-4 border-transparent text-[#94A3B8] hover:text-[#03185D]"
                   }`}
                 >
@@ -1011,7 +812,7 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* Tab 1: PESTAÑA RAUL COKA BARRIGA */}
+              {/* Contenido Pestaña 1: RAUL COKA BARRIGA */}
               {activeTab === "rcb" && (
                 <div className="bg-[#F8FAFC] p-8 rounded-2xl border border-[#E2E8F0] space-y-4">
                   <div className="flex items-center gap-3 mb-2">
@@ -1027,7 +828,7 @@ export default function Home() {
                       </span>
                     </div>
                   </div>
-                  <ul className="space-y-3 text-sm text-[#4A5568]">
+                  <ul className="space-y-3.5 text-sm text-[#4A5568]">
                     <li className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
                         <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -1062,7 +863,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Tab 2: PESTAÑA DINERS CLUB */}
+              {/* Contenido Pestaña 2: DINERS CLUB */}
               {activeTab === "diners" && (
                 <div className="bg-[#F8FAFC] p-8 rounded-2xl border border-[#E2E8F0] space-y-4">
                   <div className="flex items-center gap-3 mb-2">
@@ -1078,7 +879,7 @@ export default function Home() {
                       </span>
                     </div>
                   </div>
-                  <ul className="space-y-3 text-sm text-[#4A5568]">
+                  <ul className="space-y-3.5 text-sm text-[#4A5568]">
                     <li className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
                         <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -1113,7 +914,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Tab 3: PESTAÑA UIDE */}
+              {/* Contenido Pestaña 3: UIDE */}
               {activeTab === "uide" && (
                 <div className="bg-[#F8FAFC] p-8 rounded-2xl border border-[#E2E8F0] space-y-4">
                   <div className="flex items-center gap-3 mb-2">
@@ -1129,7 +930,7 @@ export default function Home() {
                       </span>
                     </div>
                   </div>
-                  <ul className="space-y-3 text-sm text-[#4A5568]">
+                  <ul className="space-y-3.5 text-sm text-[#4A5568]">
                     <li className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
                         <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -1165,41 +966,43 @@ export default function Home() {
               )}
             </div>
 
-            {/* Botones de Acción B15:D15 */}
-            <div className="max-w-xl mx-auto mt-12 flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                type="button"
-                onClick={() => {
-                  setConversionType("ahorro");
-                  scrollToSection("contacto-form");
-                }}
-                className="py-4 px-8 rounded-full text-center text-xs font-bold uppercase tracking-wider diners-btn-primary shadow-md cursor-pointer"
-              >
-                Quiero comenzar mi plan de ahorro
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setConversionType("asesoria");
-                  scrollToSection("contacto-form");
-                }}
-                className="py-4 px-8 rounded-full text-center text-xs font-bold uppercase tracking-wider diners-btn-secondary cursor-pointer"
-              >
-                Quiero asesoría personalizada
-              </button>
+            {/* ========================================================
+                FILA B15:D15: DOS BOTONES DE ACCIÓN (Col B & Col D)
+               ======================================================== */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12 items-center">
+              {/* Col B (B15): Quiero comenzar mi plan de ahorro */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => openLeadModal("ahorro")}
+                  className="w-full py-4 px-6 rounded-full text-center text-xs sm:text-sm font-bold uppercase tracking-wider diners-btn-primary shadow-md cursor-pointer"
+                >
+                  Quiero comenzar mi plan de ahorro
+                </button>
+              </div>
+
+              {/* Col C (C15): Espacio intermedio (vacío como en el Excel) */}
+              <div className="hidden md:block" />
+
+              {/* Col D (D15): Quiero asesoría personalizada */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => openLeadModal("asesoria")}
+                  className="w-full py-4 px-6 rounded-full text-center text-xs sm:text-sm font-bold uppercase tracking-wider diners-btn-secondary shadow-md cursor-pointer"
+                >
+                  Quiero asesoría personalizada
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
         {/* ========================================================
-            7. CIERRE INSPIRACIONAL (Fiel a Fila 16: B16:D16)
+            FILA B16:D16: CIERRE INSPIRACIONAL
            ======================================================== */}
-        <section className="py-20 bg-gradient-to-b from-[#F0F5FF] via-white to-[#F8FAFC] text-center relative overflow-hidden border-y border-[#D5E2FF]">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
-            <span className="pill-badge bg-white text-[#03185D] border border-[#CBD5E1] shadow-xs">
-              UIDE · Diners Club · RCB
-            </span>
-
+        <section className="py-20 bg-gradient-to-b from-[#F0F5FF] via-white to-[#F8FAFC] text-center relative overflow-hidden border-b border-[#D5E2FF]">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-[#03185D] uppercase">
               &ldquo;REINVENTEMOS EL FUTURO&rdquo;
             </h2>
@@ -1207,24 +1010,11 @@ export default function Home() {
             <p className="text-lg sm:text-xl text-[#313131] leading-relaxed font-medium max-w-3xl mx-auto">
               &ldquo;Cada aporte realizado hoy acerca a tu hijo a la universidad de sus sueños y le abre la puerta a experiencias que transformarán su futuro.&rdquo;
             </p>
-
-            <div className="pt-6">
-              <button
-                type="button"
-                onClick={() => {
-                  setConversionType("ahorro");
-                  scrollToSection("contacto-form");
-                }}
-                className="inline-flex items-center justify-center px-10 py-4 rounded-full text-xs font-bold tracking-widest uppercase diners-btn-primary shadow-lg shadow-blue-500/25 cursor-pointer"
-              >
-                Comenzar Plan de Ahorro Educativo
-              </button>
-            </div>
           </div>
         </section>
 
         {/* ========================================================
-            8. SECCIÓN FAQ (Fiel a Fila 17: B17:D17)
+            FILA B17:D17: SECCIÓN FAQ
            ======================================================== */}
         <section id="faq" className="py-20 bg-[#F8FAFC] border-b border-[#E2E8F0]">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1232,9 +1022,7 @@ export default function Home() {
               <h2 className="text-3xl font-black text-[#03185D] uppercase tracking-tight">
                 SECCIÓN FAQ
               </h2>
-              <p className="text-xs text-[#656565] uppercase font-bold tracking-wider mt-1">
-                Preguntas frecuentes sobre el programa de ahorro educativo Reinventors PAD
-              </p>
+              <div className="w-16 h-1 bg-[#2952E8] mx-auto mt-3 rounded-full" />
             </div>
 
             {/* Acordeón FAQ */}
@@ -1293,136 +1081,13 @@ export default function Home() {
         </section>
 
         {/* ========================================================
-            9. FORMULARIO DE ASESORÍA / REGISTRO
+            FILA B18:D18: LOGOS DE LA ALIANZA
            ======================================================== */}
-        <section
-          id="contacto-form"
-          className="py-16 bg-white border-b border-[#E2E8F0]"
-        >
-          <div className="max-w-xl mx-auto px-4 sm:px-6">
-            <div className="bg-[#F8FAFC] p-8 rounded-2xl border border-[#E2E8F0] shadow-sm">
-              <h3 className="text-xl font-black text-[#03185D] text-center mb-1">
-                Solicita tu Asesoría Personalizada
-              </h3>
-              <p className="text-xs text-[#656565] text-center mb-6">
-                Un asesor de Diners Club y UIDE preparará la corrida financiera exacta para tu familia
-              </p>
-
-              <form onSubmit={handleFormSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
-                    Nombre y Apellido *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.fullName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, fullName: e.target.value })
-                    }
-                    placeholder="Ej. Carlos Mendoza"
-                    className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#4C71FC]"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
-                      Teléfono Móvil *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
-                      }
-                      placeholder="0991234567"
-                      className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#4C71FC]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
-                      Edad de tu hijo/a *
-                    </label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={17}
-                      required
-                      value={formData.childAge}
-                      onChange={(e) =>
-                        setFormData({ ...formData, childAge: e.target.value })
-                      }
-                      className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#4C71FC]"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
-                    Correo Electrónico *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    placeholder="tu-correo@dominio.com"
-                    className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#4C71FC]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
-                    ¿Eres socio Diners Club? *
-                  </label>
-                  <select
-                    value={isDinersMember}
-                    onChange={(e) => setIsDinersMember(e.target.value)}
-                    className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm text-[#03185D] font-medium focus:outline-none focus:ring-2 focus:ring-[#4C71FC]"
-                  >
-                    <option value="si">Sí, soy socio Diners Club / TITANIUM</option>
-                    <option value="no">Aún no soy socio (quiero aplicar)</option>
-                  </select>
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    className="w-full py-3.5 rounded-full text-xs font-bold uppercase tracking-wider diners-btn-primary shadow-md cursor-pointer"
-                  >
-                    Enviar Solicitud de Plan
-                  </button>
-                </div>
-
-                {isSubmitted && (
-                  <div className="p-4 rounded-xl bg-[#DCFCE7] border border-[#86EFAC] text-xs text-[#166534] font-bold flex items-center justify-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-[#16A34A] shrink-0" />
-                    <span>¡Solicitud registrada con éxito! Un asesor especializado te contactará en menos de 24 horas.</span>
-                  </div>
-                )}
-              </form>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================================
-            10. FOOTER & LOGOS ALIANZA (Fiel a Fila 18: B18:D18)
-           ======================================================== */}
-        <footer className="bg-white py-12 border-t border-[#E2E8F0]">
+        <footer className="bg-white py-14 border-t border-[#E2E8F0]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8">
-              <span className="text-[11px] font-black uppercase tracking-widest text-[#94A3B8]">
-                Alianza Estratégica Tripartita
-              </span>
-            </div>
-
-            {/* B18:D18 Logos de la Alianza con Dimensiones Oficiales */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-items-center py-6 border-y border-[#F1F5F9]">
-              {/* Logo UIDE (B18) */}
+            {/* 3 Columnas: logo uide | logo diners | logo raul coka barriga */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-items-center py-6 border-b border-[#F1F5F9]">
+              {/* Col B (B18): logo uide */}
               <div className="flex flex-col items-center">
                 <div className="h-16 px-6 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center">
                   <img
@@ -1432,11 +1097,11 @@ export default function Home() {
                   />
                 </div>
                 <span className="text-[10px] font-mono text-[#94A3B8] mt-2">
-                  Asset Oficial: <strong>220 × 65 px</strong>
+                  logo uide: <strong>220 × 65 px</strong>
                 </span>
               </div>
 
-              {/* Logo Diners (C18) */}
+              {/* Col C (C18): logo diners */}
               <div className="flex flex-col items-center">
                 <div className="h-16 px-6 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center">
                   <img
@@ -1446,11 +1111,11 @@ export default function Home() {
                   />
                 </div>
                 <span className="text-[10px] font-mono text-[#94A3B8] mt-2">
-                  Asset Oficial: <strong>220 × 60 px</strong>
+                  logo diners: <strong>220 × 60 px</strong>
                 </span>
               </div>
 
-              {/* Logo Raul Coka Barriga (D18) */}
+              {/* Col D (D18): logo raul coka barriga */}
               <div className="flex flex-col items-center">
                 <div className="h-16 px-6 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center">
                   <img
@@ -1460,12 +1125,12 @@ export default function Home() {
                   />
                 </div>
                 <span className="text-[10px] font-mono text-[#94A3B8] mt-2">
-                  Asset Oficial: <strong>200 × 60 px</strong>
+                  logo raul coka barriga: <strong>200 × 60 px</strong>
                 </span>
               </div>
             </div>
 
-            {/* Copyright & Disclaimer */}
+            {/* Copyright & Fiduciary Disclaimer */}
             <div className="mt-8 text-center text-xs text-[#94A3B8] space-y-1">
               <p>
                 © 2026 Reinventors PAD. Todos los derechos reservados. Alianza UIDE, Diners Club del Ecuador y Raúl Coka Barriga.
@@ -1486,7 +1151,7 @@ export default function Home() {
           <div className="bg-white rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl border border-white/20">
             <div className="p-4 bg-[#03185D] text-white flex justify-between items-center">
               <span className="text-xs font-bold uppercase tracking-wider">
-                Video Explicativo — Reinventors PAD
+                VIDEO EXPLICATIVO — REINVENTORS PAD
               </span>
               <button
                 type="button"
@@ -1497,11 +1162,138 @@ export default function Home() {
               </button>
             </div>
             <div className="aspect-video bg-black flex flex-col items-center justify-center text-white p-6 text-center">
-              <Play className="w-16 h-16 text-[#4C71FC] mb-4 fill-current" />
-              <h4 className="text-xl font-bold mb-2">Video de Inducción para Familias</h4>
+              <Play className="w-16 h-16 text-[#2952E8] mb-4 fill-current" />
+              <h4 className="text-xl font-bold mb-2">Video Explicativo para Familias</h4>
               <p className="text-xs text-white/70 max-w-md">
-                Reproductor preparado para enlazar con la URL oficial de YouTube o Vimeo del programa institucional UIDE × Diners Club.
+                Reproductor preparado para enlazar con la URL oficial de YouTube o Vimeo del programa institucional UIDE × Diners Club × Raúl Coka Barriga.
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          MODAL FORMULARIO DE ASESORÍA / INICIO DE PLAN (B15:D15)
+         ======================================================== */}
+      {leadModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-[#CBD5E1]">
+            <div className="p-5 bg-[#03185D] text-white flex justify-between items-center">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider block text-[#4C71FC]">
+                  {leadType === "ahorro" ? "Plan de Ahorro Educativo" : "Asesoría Personalizada"}
+                </span>
+                <h4 className="text-base font-black">
+                  {leadType === "ahorro" ? "Comenzar mi Plan de Ahorro" : "Solicitar Asesoría Personalizada"}
+                </h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => setLeadModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6">
+              <form onSubmit={handleFormSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
+                    Nombre y Apellido *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.fullName}
+                    onChange={(e) =>
+                      setFormData({ ...formData, fullName: e.target.value })
+                    }
+                    placeholder="Ej. Carlos Mendoza"
+                    className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#2952E8]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
+                      Teléfono Móvil *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                      placeholder="0991234567"
+                      className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#2952E8]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
+                      Edad de tu hijo/a *
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={17}
+                      required
+                      value={formData.childAge}
+                      onChange={(e) =>
+                        setFormData({ ...formData, childAge: e.target.value })
+                      }
+                      className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#2952E8]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
+                    Correo Electrónico *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    placeholder="tu-correo@dominio.com"
+                    className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#2952E8]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase text-[#313131] mb-1">
+                    ¿Eres socio Diners Club? *
+                  </label>
+                  <select
+                    value={isDinersMember}
+                    onChange={(e) => setIsDinersMember(e.target.value)}
+                    className="w-full h-11 px-4 rounded-xl border border-[#CBD5E1] bg-white text-sm text-[#03185D] font-medium focus:outline-none focus:ring-2 focus:ring-[#2952E8]"
+                  >
+                    <option value="si">Sí, soy socio Diners Club / TITANIUM</option>
+                    <option value="no">Aún no soy socio (quiero aplicar)</option>
+                  </select>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    className="w-full py-3.5 rounded-full text-xs font-bold uppercase tracking-wider diners-btn-primary shadow-md cursor-pointer"
+                  >
+                    Enviar Solicitud
+                  </button>
+                </div>
+
+                {isSubmitted && (
+                  <div className="p-4 rounded-xl bg-[#DCFCE7] border border-[#86EFAC] text-xs text-[#166534] font-bold flex items-center justify-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#16A34A] shrink-0" />
+                    <span>¡Solicitud registrada con éxito! Un asesor especializado te contactará en menos de 24 horas.</span>
+                  </div>
+                )}
+              </form>
             </div>
           </div>
         </div>
