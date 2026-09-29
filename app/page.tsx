@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import SmoothScrollProvider from "@/components/smooth-scroll/SmoothScrollProvider";
 import TopographyCanvas from "@/components/canvas/TopographyCanvas";
 import PanoramicView from "@/components/dashboard/PanoramicView";
-import { CAREERS_DATA, FAQ_DATA, UIDE_CAMPUSES, getCareersByCampus } from "@/lib/data";
+import { CAREERS_DATA, FAQ_DATA, UIDE_CAMPUSES, getCareersByCampus, getCampusExtras } from "@/lib/data";
 import { Career } from "@/lib/types";
 import {
   calculatePadQuote,
@@ -36,6 +36,7 @@ import {
   DollarSign,
   MapPin,
   GraduationCap,
+  HelpCircle,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { getAssetPath } from "@/lib/paths";
@@ -51,6 +52,12 @@ export default function Home() {
     const list = getCareersByCampus(selectedCampus);
     return list.length > 0 ? list : CAREERS_DATA;
   }, [selectedCampus]);
+
+  // Aranceles complementarios por sede (Consejo Estudiantil, Seguro Universitario, Exámenes)
+  const campusExtras = useMemo(
+    () => getCampusExtras(selectedCampus),
+    [selectedCampus]
+  );
 
   // Simulator State ("calcula tu ahorro ahora")
   const [childAge, setChildAge] = useState<number>(8);
@@ -359,6 +366,72 @@ export default function Home() {
                   </div>
                 </div>
               )}
+
+              {/* Aranceles Complementarios Oficiales: Consejo Estudiantil, Seguro Universitario y Exámenes */}
+              <div className="pt-3 border-t border-white/10 space-y-2">
+                <span className="text-[10px] font-mono text-slate-300 uppercase tracking-wider block font-semibold">
+                  Aranceles Complementarios Semestrales Oficiales (Campus {selectedCampus})
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
+                    <span className="text-[10px] text-slate-400 block uppercase">Consejo Estudiantil</span>
+                    <span className="font-bold text-white">
+                      ${campusExtras.consejoEstudiantil.toFixed(2)} USD
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
+                    <span className="text-[10px] text-slate-400 block uppercase">Seguro Universitario</span>
+                    <span className="font-bold text-white">
+                      ${campusExtras.seguroUniversitario.toFixed(2)} USD
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
+                    <span className="text-[10px] text-slate-400 block uppercase">Total Derechos Semestre</span>
+                    <span className="font-bold text-[#ffc72c]">
+                      ${campusExtras.totalDerechosSemestre.toFixed(2)} USD
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
+                    <span className="text-[10px] text-slate-400 block uppercase">Examen Ubicación Inglés</span>
+                    <span className="font-bold text-blue-300">
+                      ${campusExtras.examenIngles.toFixed(2)} USD
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* AVISO REQUERIDO: PRECIO APROXIMADO & CTA PARA LLENAR DATOS */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-amber-950/40 border border-amber-500/40 space-y-3">
+                <div className="flex items-start space-x-3">
+                  <Info className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <h5 className="font-bold text-amber-300 font-mono uppercase text-xs">
+                      Estimación Aproximada y Precio Final Personalizado
+                    </h5>
+                    <p className="text-slate-200 text-xs leading-relaxed">
+                      Los valores presentados de matrícula, colegiatura, aportes al <strong>Consejo Estudiantil</strong> y aranceles complementarios son de carácter <strong>aproximado y referencial</strong> conforme al tarifario institucional vigente. Para conocer tu <strong>precio final exacto</strong>, validar la malla oficial y acceder a todos los beneficios exclusivos (incluyendo la <strong>Beca de Fidelidad PAD UIDE de hasta el 21% - 25%</strong> y la póliza fiduciaria), por favor <strong>completa tus datos en el formulario a continuación</strong>.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-1 flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={scrollToSavingsForm}
+                    className="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-[#910048] to-[#B8005D] text-white text-xs font-black font-mono uppercase tracking-wider transition-all cursor-pointer shadow-lg active:scale-95 flex items-center justify-center space-x-2"
+                  >
+                    <span>Llenar Datos para Conocer Precio Final y Beneficios</span>
+                    <Send className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={scrollToSimulator}
+                    className="py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-mono font-bold uppercase transition-colors cursor-pointer text-center"
+                  >
+                    Simular Plan de Ahorro para esta Carrera →
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
