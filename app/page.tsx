@@ -238,126 +238,123 @@ export default function Home() {
             2. HERO SECTION (Fiel a REINVENTORS PAD B2:C5 & D3:D5)
            ======================================================== */}
         <section
-          className="relative pt-12 pb-16 lg:pt-20 lg:pb-24 border-b border-[#E2E8F0] overflow-hidden bg-white"
+          className="relative min-h-[640px] lg:min-h-[740px] flex items-center border-b border-[#E2E8F0] overflow-hidden bg-[#F8FAFC]"
           style={{
-            backgroundImage: `linear-gradient(to right, #FFFFFF 0%, rgba(255,255,255,0.96) 45%, rgba(255,255,255,0.55) 70%, rgba(255,255,255,0.15) 100%), url('${getAssetPath(
-              "assets/reinventors_pad_hero.jpg"
-            )}')`,
+            backgroundImage: `url('${getAssetPath("assets/reinventors_pad_hero.jpg")}')`,
             backgroundSize: "cover",
-            backgroundPosition: "right center",
+            backgroundPosition: "right 18% center",
           }}
         >
+          {/* Subtle atmospheric vignette only on left edge to frame the card, leaving the family 100% bright and clear */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/40 to-transparent pointer-events-none" />
 
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              {/* Columna Izquierda: Copy Fiel B2:C5 */}
-              <div className="lg:col-span-7 space-y-6">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBF0FF] text-[#03185D] text-xs font-black tracking-wider uppercase border border-[#D5E2FF]">
-                  <span className="text-[#910048] font-black">UIDE</span>
-                  <span className="text-[#656565] text-[10px]">✕</span>
-                  <span className="text-[#03185D] font-black">DINERS CLUB</span>
-                  <span className="text-[#4C71FC] ml-1">● Programa de Ahorro Futuro</span>
-                </div>
-
-                {/* B2: REINVENTORS PAD */}
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#03185D] tracking-tight leading-[1.08]">
-                  REINVENTORS PAD
-                </h1>
-
-                {/* Subtítulo B2 */}
-                <p className="text-xl sm:text-2xl font-bold text-[#4C71FC] leading-snug">
-                  El futuro de tus hijos lo reiventas desde hoy
-                </p>
-
-                {/* Lead Paragraph B3:C5 */}
-                <p className="text-base sm:text-lg text-[#4A5568] leading-relaxed border-l-4 border-[#4C71FC] pl-4 bg-white/80 py-2.5 rounded-r-xl shadow-xs">
-                  &ldquo;Reinventors PAD es un programa de ahorro educativo en alianza
-                  entre UIDE, Diners Club y RCB que permite a las familias planificar
-                  el futuro universitario de sus hijos mientras acceden a
-                  experiencias de desarrollo personal, académico y familiar&rdquo;
-                </p>
-
-                {/* Clave de Negocio: NO es tarjeta, es ahorro fiduciario */}
-                <div className="p-4 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] flex items-center gap-3.5">
-                  <div className="w-9 h-9 rounded-full bg-[#28A745] flex items-center justify-center text-white shrink-0 shadow-xs">
-                    <ShieldCheck className="w-5 h-5" />
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              {/* Columna Izquierda: Tarjeta Editorial Glassmorphic */}
+              <div className="lg:col-span-7 xl:col-span-6">
+                <div className="bg-white/94 backdrop-blur-xl p-8 sm:p-10 rounded-3xl border border-white/85 shadow-[0_25px_60px_-15px_rgba(3,24,93,0.16)] space-y-6">
+                  {/* Co-Branding Tag */}
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBF0FF] text-[#03185D] text-xs font-black tracking-wider uppercase border border-[#D5E2FF]">
+                    <span className="text-[#910048] font-black">UIDE</span>
+                    <span className="text-[#656565] text-[10px]">✕</span>
+                    <span className="text-[#03185D] font-black">DINERS CLUB</span>
+                    <span className="text-[#2952E8] ml-1">● Programa de Ahorro Futuro</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-[#166534] font-medium leading-relaxed">
-                    <strong>Fondo Garantizado de Ahorro Futuro:</strong> No es una
-                    tarjeta de crédito ni instrumento de endeudamiento. Es un fideicomiso
-                    mercantil autónomo y previsor para blindar la colegiatura superior
-                    de tus hijos.
+
+                  {/* B2: REINVENTORS PAD */}
+                  <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-black text-[#03185D] tracking-tight leading-[1.06]">
+                    REINVENTORS PAD
+                  </h1>
+
+                  {/* Subtítulo B2 */}
+                  <p className="text-lg sm:text-xl font-bold text-[#2952E8] leading-snug">
+                    El futuro de tus hijos lo reiventas desde hoy
                   </p>
-                </div>
 
-                {/* CTAs B15:D15 */}
-                <div className="flex flex-wrap gap-4 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setConversionType("ahorro");
-                      scrollToSection("contacto-form");
-                    }}
-                    className="px-8 py-3.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider diners-btn-primary cursor-pointer shadow-sm"
-                  >
-                    Quiero comenzar mi plan de ahorro
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setConversionType("asesoria");
-                      scrollToSection("contacto-form");
-                    }}
-                    className="px-8 py-3.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider diners-btn-secondary cursor-pointer"
-                  >
-                    Quiero asesoría personalizada
-                  </button>
-                </div>
+                  {/* Lead Paragraph B3:C5 */}
+                  <p className="text-sm sm:text-base text-[#4A5568] leading-relaxed border-l-4 border-[#2952E8] pl-4 py-1">
+                    &ldquo;Reinventors PAD es un programa de ahorro educativo en alianza
+                    entre UIDE, Diners Club y RCB que permite a las familias planificar
+                    el futuro universitario de sus hijos mientras acceden a
+                    experiencias de desarrollo personal, académico y familiar&rdquo;
+                  </p>
 
-                {/* Image Dimension Badge for Hero asset */}
-                <div className="pt-2 flex items-center gap-2 text-[11px] font-mono text-[#656565]">
-                  <span className="w-2 h-2 rounded-full bg-[#4C71FC]" />
-                  <span>
-                    Asset Hero Lifestyle: <strong>1920 × 850 px</strong> (Desktop) · 768 × 600 px (Tablet) · 420 × 500 px (Móvil)
-                  </span>
+                  {/* Clave Fiduciaria: NO es tarjeta de crédito */}
+                  <div className="p-3.5 rounded-2xl bg-[#F0FDF4] border border-[#BBF7D0] flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[#16A34A] flex items-center justify-center text-white shrink-0 shadow-xs">
+                      <ShieldCheck className="w-4 h-4" />
+                    </div>
+                    <p className="text-xs text-[#166534] font-medium leading-relaxed">
+                      <strong>Fondo Garantizado de Ahorro Futuro:</strong> No es una
+                      tarjeta de crédito ni instrumento de endeudamiento. Es un fideicomiso
+                      mercantil autónomo y previsor para blindar la colegiatura superior
+                      de tus hijos.
+                    </p>
+                  </div>
+
+                  {/* CTAs B15:D15 */}
+                  <div className="flex flex-wrap gap-3 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setConversionType("ahorro");
+                        scrollToSection("contacto-form");
+                      }}
+                      className="px-7 py-3.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider diners-btn-primary shadow-sm cursor-pointer"
+                    >
+                      Quiero comenzar mi plan de ahorro
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setConversionType("asesoria");
+                        scrollToSection("contacto-form");
+                      }}
+                      className="px-7 py-3.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider diners-btn-secondary cursor-pointer"
+                    >
+                      Quiero asesoría personalizada
+                    </button>
+                  </div>
+
+                  {/* Image Dimension Badge for Hero asset */}
+                  <div className="pt-1 flex items-center gap-2 text-[11px] font-mono text-[#656565]">
+                    <span className="w-2 h-2 rounded-full bg-[#2952E8]" />
+                    <span>
+                      Asset Hero Lifestyle: <strong>1920 × 850 px</strong> (Desktop) · 768 × 600 px (Tablet) · 420 × 500 px (Móvil)
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Columna Derecha: D3:D5 VIDEO EXPLICATIVO */}
-              <div className="lg:col-span-5">
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-[#091829] group">
-                  <div className="aspect-video w-full relative flex flex-col items-center justify-center text-white p-6 overflow-hidden">
-                    {/* Poster Image */}
-                    <img
-                      src={getAssetPath(
-                        "assets/reinventors_pad_video_poster.jpg"
-                      )}
-                      alt="Video Explicativo Reinventors PAD"
-                      className="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#03185D]/90 via-[#091829]/40 to-transparent" />
-
-                    {/* Play Button */}
-                    <button
-                      type="button"
-                      onClick={() => setVideoModalOpen(true)}
-                      className="w-20 h-20 rounded-full bg-[#4C71FC] hover:bg-white text-white hover:text-[#03185D] flex items-center justify-center shadow-2xl transition-all transform hover:scale-110 duration-200 z-10 group-hover:ring-8 group-hover:ring-white/20 cursor-pointer"
-                      aria-label="Reproducir Video Explicativo"
-                    >
-                      <Play className="w-8 h-8 fill-current translate-x-0.5" />
-                    </button>
-
-                    <span className="mt-4 text-xs font-black tracking-widest uppercase text-white/95 z-10 drop-shadow">
-                      VIDEO EXPLICATIVO
-                    </span>
-                    <p className="text-[11px] text-white/80 text-center max-w-xs mt-1 z-10 drop-shadow">
-                      Descubre cómo funciona el programa de ahorro educativo UIDE + Diners Club + RCB (2 min)
-                    </p>
-
-                    {/* Asset Dimension Tag */}
-                    <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-sm text-white text-[10px] px-2.5 py-1 rounded font-mono z-10 border border-white/20">
-                      Asset Oficial: 800 × 450 px (16:9)
+              {/* Columna Derecha: La fotografía de la familia queda totalmente descubierta y visible, con disparador del Video Explicativo */}
+              <div className="lg:col-span-5 xl:col-span-6 flex flex-col justify-end items-end h-full pt-6 lg:pt-0">
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setVideoModalOpen(true)}
+                    className="group flex items-center gap-4 p-3 pr-6 rounded-2xl bg-white/94 backdrop-blur-md border border-white/80 shadow-2xl hover:bg-[#03185D] hover:text-white transition-all transform hover:scale-105 duration-200 cursor-pointer"
+                    aria-label="Reproducir Video Explicativo"
+                  >
+                    <div className="w-13 h-13 rounded-xl bg-[#2952E8] group-hover:bg-white text-white group-hover:text-[#03185D] flex items-center justify-center shadow-md transition-colors shrink-0">
+                      <Play className="w-6 h-6 fill-current translate-x-0.5" />
                     </div>
+                    <div className="text-left">
+                      <span className="text-xs font-black tracking-widest uppercase block text-[#03185D] group-hover:text-white">
+                        VIDEO EXPLICATIVO
+                      </span>
+                      <span className="text-[11px] text-[#656565] group-hover:text-white/80 block mt-0.5">
+                        Alianza UIDE + Diners Club + RCB (2 min)
+                      </span>
+                      <span className="text-[10px] text-[#2952E8] group-hover:text-white/90 font-bold block mt-0.5">
+                        Ver reproducción en video →
+                      </span>
+                    </div>
+                  </button>
+
+                  <div className="mt-2 text-right">
+                    <span className="text-[10px] font-mono bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded">
+                      Poster Video: 800 × 450 px (16:9)
+                    </span>
                   </div>
                 </div>
               </div>
@@ -481,9 +478,11 @@ export default function Home() {
                     "Formación para liderar, innovar y transformar",
                   ].map((bullet, idx) => (
                     <div key={idx} className="flex items-start gap-3">
-                      <span className="text-[#28A745] font-black text-base leading-none mt-0.5">
-                        ✔
-                      </span>
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span className="text-sm font-semibold text-[#03185D]">
                         {bullet}
                       </span>
@@ -656,8 +655,10 @@ export default function Home() {
               <div className="lg:col-span-3 bg-white rounded-2xl p-6 border-2 border-[#BBF7D0] shadow-xs flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#E2E8F0]">
-                    <div className="w-7 h-7 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center font-bold text-sm">
-                      ✓
+                    <div className="w-7 h-7 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                      </svg>
                     </div>
                     <h3 className="text-base font-black text-[#15803D]">
                       Si empiezas temprano
@@ -665,19 +666,35 @@ export default function Home() {
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 text-sm font-bold text-[#1F2937]">
-                      <span className="text-[#16A34A] text-lg">✅</span>
+                      <div className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>Menor aporte mensual</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm font-bold text-[#1F2937]">
-                      <span className="text-[#16A34A] text-lg">✅</span>
+                      <div className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>Mayor fondo acumulado</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm font-bold text-[#1F2937]">
-                      <span className="text-[#16A34A] text-lg">✅</span>
+                      <div className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>Más años de beneficios</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm font-bold text-[#1F2937]">
-                      <span className="text-[#16A34A] text-lg">✅</span>
+                      <div className="w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>Más oportunidades para tu hijo</span>
                     </div>
                   </div>
@@ -691,8 +708,10 @@ export default function Home() {
               <div className="lg:col-span-3 bg-white rounded-2xl p-6 border-2 border-[#FECACA] shadow-xs flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#E2E8F0]">
-                    <div className="w-7 h-7 rounded-full bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center font-bold text-sm">
-                      ✕
+                    <div className="w-7 h-7 rounded-full bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                        <path d="M3 3L9 9M9 3L3 9" />
+                      </svg>
                     </div>
                     <h3 className="text-base font-black text-[#B91C1C]">
                       Si esperas
@@ -700,15 +719,27 @@ export default function Home() {
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 text-sm font-bold text-[#374151]">
-                      <span className="text-[#DC2626] text-lg">❌</span>
+                      <div className="w-5 h-5 rounded-full bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center shrink-0">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                          <path d="M3 3L9 9M9 3L3 9" />
+                        </svg>
+                      </div>
                       <span>Mayor esfuerzo financiero</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm font-bold text-[#374151]">
-                      <span className="text-[#DC2626] text-lg">❌</span>
+                      <div className="w-5 h-5 rounded-full bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center shrink-0">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                          <path d="M3 3L9 9M9 3L3 9" />
+                        </svg>
+                      </div>
                       <span>Menos beneficios acumulados</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm font-bold text-[#374151]">
-                      <span className="text-[#DC2626] text-lg">❌</span>
+                      <div className="w-5 h-5 rounded-full bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center shrink-0">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                          <path d="M3 3L9 9M9 3L3 9" />
+                        </svg>
+                      </div>
                       <span>Menor tiempo de planificación</span>
                     </div>
                   </div>
@@ -997,20 +1028,32 @@ export default function Home() {
                     </div>
                   </div>
                   <ul className="space-y-3 text-sm text-[#4A5568]">
-                    <li className="flex items-start gap-2.5">
-                      <span className="text-[#28A745] font-bold">✔</span>
+                    <li className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>
                         <strong>Custodia Fiduciaria:</strong> Fondos administrados bajo fideicomiso mercantil autónomo, inembargable y auditado por la Superintendencia.
                       </span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <span className="text-[#28A745] font-bold">✔</span>
+                    <li className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>
                         <strong>Seguro de Continuidad Educativa:</strong> Cobertura por invalidez o fallecimiento del tutor ($25 USD/mes) que garantiza el 100% de la meta universitaria proyectada.
                       </span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <span className="text-[#28A745] font-bold">✔</span>
+                    <li className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>
                         <strong>Rentabilidad Programada:</strong> Rendimientos financieros que maximizan el fondo por sobre la inflación local.
                       </span>
@@ -1036,20 +1079,32 @@ export default function Home() {
                     </div>
                   </div>
                   <ul className="space-y-3 text-sm text-[#4A5568]">
-                    <li className="flex items-start gap-2.5">
-                      <span className="text-[#28A745] font-bold">✔</span>
+                    <li className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>
                         <strong>Débito Automático Programado:</strong> Aportes mensuales automáticos con 0% de comisión administrativa adicional.
                       </span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <span className="text-[#28A745] font-bold">✔</span>
+                    <li className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>
                         <strong>Millas / Recompensas Club Miles:</strong> Cada aporte al plan educativo suma millas 1:1 en el programa Club Miles de Diners.
                       </span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <span className="text-[#28A745] font-bold">✔</span>
+                    <li className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>
                         <strong>Facilidades de Diferido:</strong> Posibilidad de realizar aportes extraordinarios o regularizaciones con condiciones preferenciales.
                       </span>
@@ -1075,20 +1130,32 @@ export default function Home() {
                     </div>
                   </div>
                   <ul className="space-y-3 text-sm text-[#4A5568]">
-                    <li className="flex items-start gap-2.5">
-                      <span className="text-[#28A745] font-bold">✔</span>
+                    <li className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>
                         <strong>Congelamiento de Aranceles:</strong> Blindaje total contra incrementos futuros en la matrícula de la carrera de tu hijo.
                       </span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <span className="text-[#28A745] font-bold">✔</span>
+                    <li className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>
                         <strong>Acceso Preferente al Ecosistema ASU:</strong> Conexión con programas de intercambio y titulación internacional con Arizona State University.
                       </span>
                     </li>
-                    <li className="flex items-start gap-2.5">
-                      <span className="text-[#28A745] font-bold">✔</span>
+                    <li className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                        <svg className="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2.5 6.5L4.5 8.5L9.5 3.5" />
+                        </svg>
+                      </div>
                       <span>
                         <strong>Talleres Vocacionales y Campus Pass:</strong> Talleres, bootcamps y uso de instalaciones universitarias desde etapas escolares.
                       </span>
@@ -1206,8 +1273,12 @@ export default function Home() {
                     className="w-full text-left px-6 py-4 font-bold text-[#03185D] flex justify-between items-center text-sm sm:text-base hover:bg-[#F8FAFC] cursor-pointer"
                   >
                     <span>{faq.q}</span>
-                    <span className="text-[#4C71FC] text-xl font-bold ml-4">
-                      {openFaqIndex === idx ? "−" : "+"}
+                    <span className="ml-4 shrink-0 text-[#2952E8]">
+                      <ChevronDown
+                        className={`w-5 h-5 transition-transform duration-200 ${
+                          openFaqIndex === idx ? "rotate-180" : ""
+                        }`}
+                      />
                     </span>
                   </button>
                   {openFaqIndex === idx && (
@@ -1328,8 +1399,9 @@ export default function Home() {
                 </div>
 
                 {isSubmitted && (
-                  <div className="p-3.5 rounded-xl bg-[#DCFCE7] border border-[#86EFAC] text-xs text-center text-[#166534] font-bold">
-                    ✓ ¡Solicitud registrada con éxito! Un asesor especializado te contactará en menos de 24 horas.
+                  <div className="p-4 rounded-xl bg-[#DCFCE7] border border-[#86EFAC] text-xs text-[#166534] font-bold flex items-center justify-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-[#16A34A] shrink-0" />
+                    <span>¡Solicitud registrada con éxito! Un asesor especializado te contactará en menos de 24 horas.</span>
                   </div>
                 )}
               </form>
