@@ -1,17 +1,39 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import SmoothScrollProvider from "@/components/smooth-scroll/SmoothScrollProvider";
 import TopographyCanvas from "@/components/canvas/TopographyCanvas";
 import PanoramicView from "@/components/dashboard/PanoramicView";
 import { CAREERS_DATA, FAQ_DATA } from "@/lib/data";
 import { Career } from "@/lib/types";
 import {
+  calculatePadQuote,
+  generateAmortizationSchedule,
+  TASA_NOMINAL_ANUAL,
+  RETENCION_SRI,
+  SEGURO_RCB_MENSUAL,
+  MAX_CARGO_MENSUAL,
+} from "@/lib/calculator";
+import {
   Play,
   X,
   Check,
   ChevronDown,
   CheckCircle2,
+  Shield,
+  ShieldCheck,
+  TrendingUp,
+  Plane,
+  AlertTriangle,
+  Table as TableIcon,
+  Send,
+  Lock,
+  CreditCard,
+  UserCheck,
+  Sparkles,
+  Info,
+  Calendar,
+  DollarSign,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { getAssetPath } from "@/lib/paths";
@@ -22,30 +44,44 @@ export default function Home() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   // Simulator State ("calcula tu ahorro ahora")
-  const [childAge, setChildAge] = useState<number>(5);
-  const [monthlyContribution, setMonthlyContribution] = useState<number>(180);
+  const [childAge, setChildAge] = useState<number>(8);
+  const [targetGoal, setTargetGoal] = useState<number>(CAREERS_DATA[0].totalTuitionRef);
+  const [isCustomGoal, setIsCustomGoal] = useState<boolean>(false);
+  const [showAmortization, setShowAmortization] = useState<boolean>(false);
 
   // Form State
   const [conversionType, setConversionType] = useState<"ahorro" | "asesoria">("ahorro");
+  const [isDinersMember, setIsDinersMember] = useState<boolean>(true);
+  const [termsAccepted, setTermsAccepted] = useState<boolean>(true);
+  const [dataConsent, setDataConsent] = useState<boolean>(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [sftpPayload, setSftpPayload] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     fullName: "",
     cedula: "",
     phone: "",
     email: "",
     city: "Quito",
-    dataConsent: true,
   });
 
-  const yearsRemaining = Math.max(1, 18 - childAge);
-  const months = yearsRemaining * 12;
-  const annualRate = 0.068;
-  const monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1;
-  const futureValue = Math.round(
-    monthlyContribution *
-      ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) *
-      (1 + monthlyRate)
+  // Official Financial Calculations via lib/calculator.ts
+  const padResult = useMemo(
+    () => calculatePadQuote(targetGoal, childAge),
+    [targetGoal, childAge]
   );
+
+  // Amortization Schedule Data
+  const amortizationData = useMemo(
+    () => generateAmortizationSchedule(targetGoal, childAge, 6),
+    [targetGoal, childAge]
+  );
+
+  const handleCareerChange = (career: Career) => {
+    setSelectedCareer(career);
+    if (!isCustomGoal) {
+      setTargetGoal(career.totalTuitionRef);
+    }
+  };
 
   const scrollToSimulator = () => {
     const el = document.getElementById("cotizador");
@@ -71,11 +107,48 @@ export default function Home() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const payload = {
+      record_id: `PAD-${Date.now().toString().slice(-6)}`,
+      timestamp: new Date().toISOString(),
+      action_type:
+        conversionType === "ahorro"
+          ? "START_SAVINGS_PLAN_CONTRACT"
+          : "PERSONALIZED_ADVISORY_REQUEST",
+      program: "REINVENTORS PAD (UIDE x Diners Club x Raul Coka Barriga)",
+      simulation: {
+        career_name: selectedCareer.name,
+        target_goal_usd: targetGoal,
+        child_age_years: childAge,
+        term_months: padResult.plazoMeses,
+        monthly_pad_savings_usd: padResult.aportePad,
+        monthly_rcb_insurance_usd: padResult.seguroRcb,
+        total_monthly_quote_usd: padResult.cuotaTotal,
+        daily_effort_usd: padResult.esfuerzoDiario,
+        sum_insured_rcb_usd: padResult.sumaAsegurada,
+        net_interest_earned_usd: padResult.interesesNetos,
+        clubmiles_projected: padResult.clubMiles,
+      },
+      client_data: {
+        full_name: formData.fullName || "Santiago Paredes",
+        national_id: formData.cedula || "1719284751",
+        phone_number: formData.phone || "0998765432",
+        email_address: formData.email || "santiago.paredes@example.com",
+        city: formData.city,
+        is_diners_club_member: isDinersMember,
+        dpa_lopdp_consent: dataConsent,
+        terms_accepted: termsAccepted,
+        sftp_delivery_target: "sftp://secure-leads.dinersclub.com.ec/pad/inbound/",
+      },
+    };
+
+    setSftpPayload(JSON.stringify(payload, null, 2));
     setIsSubmitted(true);
+
     try {
       confetti({
-        particleCount: 80,
-        spread: 70,
+        particleCount: 90,
+        spread: 75,
         origin: { y: 0.6 },
         colors: ["#910048", "#002D72", "#EAAA00", "#FFFFFF"],
       });
@@ -156,7 +229,7 @@ export default function Home() {
                 value={selectedCareer.id}
                 onChange={(e) => {
                   const career = CAREERS_DATA.find((c) => c.id === e.target.value);
-                  if (career) setSelectedCareer(career);
+                  if (career) handleCareerChange(career);
                 }}
                 className="w-full bg-[#08090C] text-white text-sm sm:text-base font-medium rounded-2xl p-4 border border-white/25 focus:border-[#ff3377] focus:outline-none cursor-pointer"
               >
@@ -195,26 +268,120 @@ export default function Home() {
 
         {/* ========================================================
             SECTION: SIMULADOR (calcula tu ahorro ahora)
+            MOTOR MATEMÁTICO EXACTO DE CALCULADORA EXCEL & BANCO DINERS
            ======================================================== */}
         <section
           id="cotizador"
           className="relative max-w-7xl mx-auto py-20 px-3 sm:px-6 lg:px-8 border-t border-white/10 w-full max-w-full overflow-hidden"
         >
-          <div className="max-w-4xl mx-auto text-center space-y-2 mb-12">
+          <div className="max-w-4xl mx-auto text-center space-y-2 mb-10">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-[#ffc72c]" />
+              <span className="text-[11px] font-mono uppercase tracking-widest text-slate-300">
+                SIMULADOR FINANCIERO FIDUCIARIO OFICIAL
+              </span>
+            </div>
             <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-white font-mono drop-shadow">
               calcula tu ahorro ahora
             </h2>
-            <p className="text-xs text-slate-300 font-mono font-medium">
-              (FORMATO COTIZADOR CORREO ADJUNTO)
+            <p className="text-xs text-slate-300 font-mono font-medium max-w-2xl mx-auto">
+              (FORMATO COTIZADOR CORREO ADJUNTO • TASA NOMINAL 3.40% ANUAL • RETENCIÓN SRI 2% • SEGURO RCB $25/MES)
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto glass-panel bg-[#0a0d16]/95 rounded-3xl p-6 sm:p-8 border border-white/20 space-y-6 shadow-2xl">
-            {/* Slider Edad */}
+          <div className="max-w-4xl mx-auto glass-panel bg-[#0a0d16]/95 rounded-3xl p-6 sm:p-8 border border-white/20 space-y-7 shadow-2xl">
+            {/* Selector de Meta de Ahorro: Carrera o Personalizada */}
+            <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <label className="text-xs font-mono uppercase tracking-wider text-slate-200 font-bold flex items-center space-x-2">
+                  <DollarSign className="w-4 h-4 text-[#ffc72c]" />
+                  <span>Meta de Ahorro para Educación Superior:</span>
+                </label>
+
+                <div className="flex items-center space-x-2 text-xs font-mono">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomGoal(false);
+                      setTargetGoal(selectedCareer.totalTuitionRef);
+                    }}
+                    className={`px-3 py-1 rounded-lg transition-colors ${
+                      !isCustomGoal
+                        ? "bg-[#910048] text-white font-bold"
+                        : "bg-white/5 text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    Por Carrera UIDE
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsCustomGoal(true)}
+                    className={`px-3 py-1 rounded-lg transition-colors ${
+                      isCustomGoal
+                        ? "bg-[#002D72] text-white font-bold border border-blue-400/40"
+                        : "bg-white/5 text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    Monto Personalizado
+                  </button>
+                </div>
+              </div>
+
+              {isCustomGoal ? (
+                <div className="space-y-2 pt-1">
+                  <div className="flex justify-between items-center text-xs font-mono">
+                    <span className="text-slate-300">Ajusta la meta de capital:</span>
+                    <span className="text-2xl font-black font-mono text-[#ffc72c]">
+                      ${targetGoal.toLocaleString("en-US")} USD
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="10000"
+                    max="60000"
+                    step="1000"
+                    value={targetGoal}
+                    onChange={(e) => setTargetGoal(parseInt(e.target.value))}
+                    className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#ffc72c]"
+                  />
+                  <div className="flex justify-between text-[11px] font-mono text-slate-400">
+                    <span>$10,000 USD</span>
+                    <span>$30,000 USD (Ref. Promedio)</span>
+                    <span>$60,000 USD</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                  <div className="text-xs">
+                    <span className="text-slate-400 block text-[10px] font-mono uppercase">
+                      Carrera Seleccionada:
+                    </span>
+                    <span className="text-white font-bold text-sm">
+                      {selectedCareer.name} ({selectedCareer.semesters} semestres)
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-slate-400 block text-[10px] font-mono uppercase">
+                      Meta Colegiatura Total:
+                    </span>
+                    <span className="text-xl sm:text-2xl font-black font-mono text-[#ffc72c]">
+                      ${targetGoal.toLocaleString("en-US")} USD
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Slider Edad del hijo/a */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-mono">
-                <span className="text-slate-100 font-medium">Edad actual del hijo/a:</span>
-                <span className="text-white font-bold text-sm">{childAge} años</span>
+              <div className="flex justify-between items-center text-xs font-mono">
+                <span className="text-slate-100 font-medium flex items-center space-x-1.5">
+                  <Calendar className="w-4 h-4 text-blue-400" />
+                  <span>Edad actual del hijo/a:</span>
+                </span>
+                <span className="text-white font-black text-sm bg-white/10 px-3 py-1 rounded-xl font-mono">
+                  {childAge} {childAge === 1 ? "año" : "años"}
+                </span>
               </div>
               <input
                 type="range"
@@ -225,65 +392,194 @@ export default function Home() {
                 className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#ff3377]"
               />
               <div className="flex justify-between text-[11px] font-mono text-slate-300">
-                <span>0 años</span>
-                <span className="text-blue-300 font-semibold">{yearsRemaining} años hasta la universidad</span>
+                <span>Recién nacido (0 años)</span>
+                <span className="text-blue-300 font-bold">
+                  {padResult.plazoAnos} años restantes ({padResult.plazoMeses} meses)
+                </span>
                 <span>16 años</span>
               </div>
             </div>
 
-            {/* Slider Aporte */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-mono">
-                <span className="text-slate-100 font-medium">Aporte mensual estimado:</span>
-                <span className="text-[#ffc72c] font-black font-mono text-base">
-                  ${monthlyContribution} USD/mes
-                </span>
-              </div>
-              <input
-                type="range"
-                min="50"
-                max="800"
-                step="25"
-                value={monthlyContribution}
-                onChange={(e) => setMonthlyContribution(parseInt(e.target.value))}
-                className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#EAAA00]"
-              />
-              <div className="flex justify-between text-[11px] font-mono text-slate-300">
-                <span>$50 USD</span>
-                <span>$800 USD</span>
-              </div>
-            </div>
-
-            {/* Dynamic Results */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-black/60 border border-white/15">
-              <div>
-                <span className="text-[10px] font-mono text-slate-300 uppercase block font-semibold">
-                  Fondo total proyectado a los 18 años
-                </span>
-                <div className="text-2xl sm:text-3xl font-black text-[#ffc72c] font-mono mt-1">
-                  ${futureValue.toLocaleString("en-US")} USD
+            {/* CALLOUT PRINCIPAL: CUOTA TOTAL MENSUAL & ESFUERZO DIARIO */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#910048]/30 via-[#002D72]/40 to-[#EAAA00]/25 border border-white/20 shadow-xl">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+                {/* Cuota Total Mensual */}
+                <div className="md:col-span-7 space-y-1">
+                  <div className="inline-flex items-center space-x-1.5 text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">
+                    <span>CUOTA TOTAL MENSUAL (AHORRO PAD + SEGURO RCB)</span>
+                  </div>
+                  <div className="text-3xl sm:text-5xl font-black text-[#ffc72c] font-mono drop-shadow">
+                    ${padResult.cuotaTotal.toFixed(2)}
+                    <span className="text-sm font-normal text-slate-200"> USD/mes</span>
+                  </div>
+                  <div className="text-xs text-slate-300 font-mono pt-1">
+                    Composición:{" "}
+                    <span className="text-white font-bold">${padResult.aportePad.toFixed(2)}</span> Ahorro PAD +{" "}
+                    <span className="text-[#ffc72c] font-bold">${padResult.seguroRcb.toFixed(2)}</span> Seguro Estudiantil RCB
+                  </div>
                 </div>
-              </div>
-              <div>
-                <span className="text-[10px] font-mono text-slate-300 uppercase block font-semibold">
-                  Cobertura estimada ({selectedCareer.name})
-                </span>
-                <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono mt-1">
-                  {Math.min(100, Math.round((futureValue / selectedCareer.totalTuitionRef) * 100))}%
+
+                {/* Esfuerzo Diario */}
+                <div className="md:col-span-5 p-4 rounded-xl bg-black/50 border border-white/10 text-center md:text-right">
+                  <span className="text-[10px] font-mono text-slate-300 uppercase tracking-wider block font-semibold">
+                    Esfuerzo Diario Equivalente
+                  </span>
+                  <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono mt-0.5">
+                    ${padResult.esfuerzoDiario.toFixed(2)}
+                    <span className="text-xs font-normal text-slate-300"> USD/día</span>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                    Calculado sobre base mensual de 30 días
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* DESGLOSE TÉCNICO FINANCIERO OFICIAL EXCEL */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {/* Total Aportado */}
+              <div className="p-4 rounded-2xl bg-black/60 border border-white/10 space-y-1">
+                <span className="text-[10px] font-mono text-slate-400 uppercase block font-semibold">
+                  Total Aportado en el Tiempo
+                </span>
+                <div className="text-xl sm:text-2xl font-black text-slate-200 font-mono">
+                  ${padResult.totalAportadoAhorro.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </div>
+                <div className="text-[10px] font-mono text-slate-400">
+                  {padResult.plazoMeses} aportes de ${padResult.aportePad.toFixed(2)}
+                </div>
+              </div>
+
+              {/* Intereses Netos Ganados */}
+              <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 space-y-1">
+                <span className="text-[10px] font-mono text-emerald-400 uppercase block font-semibold flex items-center space-x-1">
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  <span>Intereses Netos Ganados</span>
+                </span>
+                <div className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">
+                  +${padResult.interesesNetos.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </div>
+                <div className="text-[10px] font-mono text-emerald-300/80">
+                  Tasa 3.40% nominal • Ret. SRI 2% deducida
+                </div>
+              </div>
+
+              {/* Suma Asegurada RCB */}
+              <div className="p-4 rounded-2xl bg-amber-950/40 border border-amber-500/30 space-y-1 sm:col-span-2 lg:col-span-1">
+                <span className="text-[10px] font-mono text-amber-400 uppercase block font-semibold flex items-center space-x-1">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Suma Asegurada RCB</span>
+                </span>
+                <div className="text-xl sm:text-2xl font-black text-amber-400 font-mono">
+                  ${padResult.sumaAsegurada.toLocaleString("en-US")} USD
+                </div>
+                <div className="text-[10px] font-mono text-amber-300/80">
+                  100% colegiatura garantizada ante imprevistos
+                </div>
+              </div>
+            </div>
+
+            {/* ClubMiles & Fondo al Vencimiento */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 text-xs font-mono">
+              <div className="flex items-center space-x-2 text-blue-300">
+                <Plane className="w-4 h-4 text-blue-400 shrink-0" />
+                <span>
+                  Millas Diners generadas:{" "}
+                  <strong className="text-white">+{padResult.clubMiles.toLocaleString("en-US")} ClubMiles</strong> (1:1 en cada aporte)
+                </span>
+              </div>
+              <div className="text-slate-300 text-[11px]">
+                Fondo acumulado al vencimiento:{" "}
+                <strong className="text-emerald-400">${padResult.saldoFinal.toLocaleString("en-US", { minimumFractionDigits: 2 })} USD</strong> (100% de la meta)
+              </div>
+            </div>
+
+            {/* Alerta de Límite Bancario Diners Club ($4,999 USD/mes) */}
+            {padResult.excedeLimiteBancario && (
+              <div className="p-4 rounded-2xl bg-rose-950/60 border border-rose-500/50 flex items-start space-x-3 text-rose-200 text-xs">
+                <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-white block font-mono uppercase">
+                    Aviso Operativo Banco Diners Club:
+                  </strong>
+                  La cuota mensual de ${padResult.cuotaTotal.toFixed(2)} USD excede el límite máximo de cargo recurrente permitido ($4,999.00 USD/mes). Te sugerimos seleccionar una meta menor o iniciar el ahorro con mayor anticipación.
+                </div>
+              </div>
+            )}
+
+            {/* BOTÓN DESPLEGABLE: TABLA DE AMORTIZACIÓN OFICIAL */}
+            <div className="pt-1 border-t border-white/10">
+              <button
+                type="button"
+                onClick={() => setShowAmortization(!showAmortization)}
+                className="w-full py-3 px-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 flex items-center justify-between text-xs font-mono font-bold text-slate-200 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center space-x-2">
+                  <TableIcon className="w-4 h-4 text-[#ffc72c]" />
+                  <span>
+                    {showAmortization ? "Ocultar Tabla de Amortización" : "Ver Tabla de Amortización Oficial (Modelo Excel)"}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-1.5 text-slate-400 text-[11px]">
+                  <span>{amortizationData.totalRows} meses de proyección</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAmortization ? "rotate-180" : ""}`} />
+                </div>
+              </button>
+
+              {showAmortization && (
+                <div className="mt-4 p-4 rounded-2xl bg-black/70 border border-white/15 overflow-x-auto text-[11px] font-mono space-y-3">
+                  <div className="text-[10px] text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>Cronograma de Capitalización y Seguro (Primeros meses e hitos anuales)</span>
+                    <span className="text-[#ffc72c]">Tasa Nominal 3.40% • Ret. 2%</span>
+                  </div>
+
+                  <table className="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                      <tr className="border-b border-white/20 text-slate-300 text-[10px] uppercase">
+                        <th className="py-2 pr-2">Mes</th>
+                        <th className="py-2 px-2">Saldo Inicial</th>
+                        <th className="py-2 px-2">Aporte PAD</th>
+                        <th className="py-2 px-2">Interés Mes</th>
+                        <th className="py-2 px-2">Ret. SRI (2%)</th>
+                        <th className="py-2 px-2">Saldo Final</th>
+                        <th className="py-2 px-2">Seguro RCB</th>
+                        <th className="py-2 pl-2 text-right">Cuota Total</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {amortizationData.rows.map((row) => (
+                        <tr key={row.mes} className="hover:bg-white/[0.03]">
+                          <td className="py-2 pr-2 font-bold text-white">Mes {row.mes}</td>
+                          <td className="py-2 px-2 text-slate-300">${row.saldoInicial.toFixed(2)}</td>
+                          <td className="py-2 px-2 text-blue-300 font-bold">${row.aportePad.toFixed(2)}</td>
+                          <td className="py-2 px-2 text-emerald-400">+${row.interesMes.toFixed(2)}</td>
+                          <td className="py-2 px-2 text-rose-400">-${row.retencionMes.toFixed(2)}</td>
+                          <td className="py-2 px-2 text-emerald-300 font-bold">${row.saldoFinal.toFixed(2)}</td>
+                          <td className="py-2 px-2 text-amber-300">${row.seguroMensual.toFixed(2)}</td>
+                          <td className="py-2 pl-2 text-right font-black text-[#ffc72c]">${row.cuotaTotalMes.toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="text-[10px] text-slate-500 pt-2 border-t border-white/10 flex justify-between">
+                    <span>* Plazo mínimo contractual: 12 meses.</span>
+                    <span>Costo acumulado seguro al término: ${(SEGURO_RCB_MENSUAL * padResult.plazoMeses).toLocaleString("en-US")} USD</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* DUAL ACTION BUTTONS */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 onClick={scrollToSavingsForm}
-                className="flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#a80054] to-[#c70063] hover:from-[#c70063] hover:to-[#e60073] text-white text-xs font-black font-mono uppercase tracking-wider transition-colors cursor-pointer text-center shadow-lg active:scale-95"
+                className="flex-1 py-4 px-4 rounded-xl bg-gradient-to-r from-[#a80054] to-[#c70063] hover:from-[#c70063] hover:to-[#e60073] text-white text-xs sm:text-sm font-black font-mono uppercase tracking-wider transition-colors cursor-pointer text-center shadow-lg active:scale-95"
               >
                 Quiero comenzar mi plan de ahorro
               </button>
               <button
                 onClick={scrollToAdvisoryForm}
-                className="flex-1 py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#a80054] to-[#c70063] hover:from-[#c70063] hover:to-[#e60073] text-white text-xs font-black font-mono uppercase tracking-wider transition-colors cursor-pointer text-center shadow-lg active:scale-95"
+                className="flex-1 py-4 px-4 rounded-xl bg-gradient-to-r from-[#002D72] to-[#004A97] hover:from-[#004A97] hover:to-[#005bb5] text-white text-xs sm:text-sm font-black font-mono uppercase tracking-wider transition-colors cursor-pointer text-center shadow-lg active:scale-95 border border-blue-400/40"
               >
                 Quiero asesoría personalizada
               </button>
@@ -293,12 +589,19 @@ export default function Home() {
 
         {/* ========================================================
             SECTION: REINVENTEMOS EL FUTURO & ONBOARDING FORM
+            FLUJO COMERCIAL: SOCIOS Y NO SOCIOS (TARJETIZACIÓN)
            ======================================================== */}
         <section
           id="formulario"
           className="relative max-w-7xl mx-auto py-20 px-3 sm:px-6 lg:px-8 border-t border-white/10 w-full max-w-full overflow-hidden"
         >
           <div className="max-w-3xl mx-auto text-center space-y-3 mb-10">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 mb-2">
+              <Lock className="w-3.5 h-3.5 text-[#ffc72c]" />
+              <span className="text-[11px] font-mono uppercase tracking-widest text-slate-300">
+                FORMALIZACIÓN & ONBOARDING SEGURO
+              </span>
+            </div>
             <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-white font-mono drop-shadow">
               REINVENTEMOS EL FUTURO
             </h2>
@@ -308,13 +611,77 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="max-w-2xl mx-auto glass-panel bg-[#0a0d16]/95 rounded-3xl p-6 sm:p-8 border border-white/20 shadow-2xl">
+          <div className="max-w-3xl mx-auto glass-panel bg-[#0a0d16]/95 rounded-3xl p-6 sm:p-10 border border-white/20 shadow-2xl">
+            {/* Banner Resumen del Plan Cotizado */}
+            <div className="mb-6 p-4 rounded-2xl bg-black/40 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+              <div>
+                <span className="text-slate-400 block text-[10px] uppercase">Plan Seleccionado:</span>
+                <span className="text-white font-bold">{selectedCareer.name}</span>
+              </div>
+              <div>
+                <span className="text-slate-400 block text-[10px] uppercase">Meta Universitaria:</span>
+                <span className="text-[#ffc72c] font-bold">${targetGoal.toLocaleString("en-US")} USD</span>
+              </div>
+              <div>
+                <span className="text-slate-400 block text-[10px] uppercase">Plazo:</span>
+                <span className="text-blue-300 font-bold">{padResult.plazoMeses} meses</span>
+              </div>
+              <div>
+                <span className="text-slate-400 block text-[10px] uppercase">Cuota Mensual:</span>
+                <span className="text-emerald-400 font-bold">${padResult.cuotaTotal.toFixed(2)} USD/mes</span>
+              </div>
+            </div>
+
             {!isSubmitted ? (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* SELECTOR SOCIO DINERS CLUB / NO SOCIO (Slide 7 & 8 Propuesta Comercial) */}
+                <div className="space-y-2">
+                  <label className="text-xs font-mono text-slate-200 uppercase block font-bold">
+                    ¿Ya eres socio Diners Club? *
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setIsDinersMember(true)}
+                      className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                        isDinersMember
+                          ? "bg-[#002D72]/50 border-blue-400 shadow-[0_0_20px_rgba(0,45,114,0.4)] text-white"
+                          : "bg-black/30 border-white/10 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2 mb-1">
+                        <CreditCard className="w-4 h-4 text-blue-400" />
+                        <span className="font-bold text-xs uppercase font-mono">SÍ, ya soy socio Diners Club</span>
+                      </div>
+                      <p className="text-[11px] text-slate-300 leading-snug">
+                        Débito automático recurrente a tu tarjeta y acumulación 1:1 de ClubMiles.
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsDinersMember(false)}
+                      className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                        !isDinersMember
+                          ? "bg-[#910048]/50 border-pink-400 shadow-[0_0_20px_rgba(145,0,72,0.4)] text-white"
+                          : "bg-black/30 border-white/10 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2 mb-1">
+                        <UserCheck className="w-4 h-4 text-pink-400" />
+                        <span className="font-bold text-xs uppercase font-mono">NO, quiero solicitar mi tarjeta</span>
+                      </div>
+                      <p className="text-[11px] text-slate-300 leading-snug">
+                        Evaluación crediticia inmediata para emisión de tarjeta Diners y vinculación al PAD.
+                      </p>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-[11px] font-mono text-slate-200 uppercase block mb-1 font-semibold">
-                      Nombre y Apellido *
+                      Nombre y Apellido del Titular *
                     </label>
                     <input
                       type="text"
@@ -325,9 +692,10 @@ export default function Home() {
                       className="w-full bg-[#08090C] text-white text-xs rounded-xl px-4 py-3 border border-white/20 focus:border-[#ff3377] focus:outline-none"
                     />
                   </div>
+
                   <div>
                     <label className="text-[11px] font-mono text-slate-200 uppercase block mb-1 font-semibold">
-                      Cédula de Identidad *
+                      Cédula de Identidad (10 dígitos) *
                     </label>
                     <input
                       type="text"
@@ -339,9 +707,10 @@ export default function Home() {
                       className="w-full bg-[#08090C] text-white text-xs rounded-xl px-4 py-3 border border-white/20 focus:border-[#ff3377] focus:outline-none font-mono"
                     />
                   </div>
+
                   <div>
                     <label className="text-[11px] font-mono text-slate-200 uppercase block mb-1 font-semibold">
-                      Teléfono WhatsApp *
+                      Teléfono Celular WhatsApp *
                     </label>
                     <input
                       type="tel"
@@ -352,6 +721,7 @@ export default function Home() {
                       className="w-full bg-[#08090C] text-white text-xs rounded-xl px-4 py-3 border border-white/20 focus:border-[#ff3377] focus:outline-none font-mono"
                     />
                   </div>
+
                   <div>
                     <label className="text-[11px] font-mono text-slate-200 uppercase block mb-1 font-semibold">
                       Correo Electrónico *
@@ -365,30 +735,104 @@ export default function Home() {
                       className="w-full bg-[#08090C] text-white text-xs rounded-xl px-4 py-3 border border-white/20 focus:border-[#ff3377] focus:outline-none"
                     />
                   </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="text-[11px] font-mono text-slate-200 uppercase block mb-1 font-semibold">
+                      Ciudad de Residencia
+                    </label>
+                    <select
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      className="w-full bg-[#08090C] text-white text-xs rounded-xl px-4 py-3 border border-white/20 focus:border-[#ff3377] focus:outline-none cursor-pointer"
+                    >
+                      <option value="Quito">Quito (Campus Principal UIDE)</option>
+                      <option value="Guayaquil">Guayaquil (Sede UIDE)</option>
+                      <option value="Cuenca">Cuenca</option>
+                      <option value="Loja">Loja (Sede UIDE)</option>
+                      <option value="Ambato">Ambato</option>
+                      <option value="Otra">Otra ciudad</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* CLÁUSULAS CONTRACTUALES Y TRATAMIENTO DE DATOS (Slide 7 & 8) */}
+                <div className="space-y-3 pt-2">
+                  <label className="flex items-start space-x-3 cursor-pointer p-3.5 rounded-xl bg-black/40 border border-white/10">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="mt-1 w-4 h-4 rounded text-[#910048] accent-[#910048] cursor-pointer shrink-0"
+                    />
+                    <span className="text-[11px] text-slate-300 leading-snug">
+                      Acepto las condiciones del <strong>Plan de Acumulación Diners (el PAD)</strong> de Banco Diners Club del Ecuador S.A. (plazo mínimo 12 meses a tasa nominal 3.40% anual con capitalización mensual, cargo recurrente mensual máximo de hasta $4,999 USD) y la contratación de la póliza de protección estudiantil de <strong>Raúl Coka Barriga</strong> ($25.00 USD/mes fija con cobertura del 100% de la colegiatura).
+                    </span>
+                  </label>
+
+                  <label className="flex items-start space-x-3 cursor-pointer p-3.5 rounded-xl bg-black/40 border border-white/10">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={dataConsent}
+                      onChange={(e) => setDataConsent(e.target.checked)}
+                      className="mt-1 w-4 h-4 rounded text-[#910048] accent-[#910048] cursor-pointer shrink-0"
+                    />
+                    <span className="text-[11px] text-slate-300 leading-snug">
+                      Autorizo expresamente a la <strong>UIDE, Diners Club del Ecuador y Raúl Coka Barriga</strong> al tratamiento de mis datos personales de conformidad con la <strong>Ley Orgánica de Protección de Datos Personales (LOPDP)</strong> y el acuerdo DPA suscrito con la universidad.
+                    </span>
+                  </label>
                 </div>
 
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-[#a80054] to-[#c70063] hover:from-[#c70063] hover:to-[#e60073] text-white text-xs sm:text-sm font-black font-mono uppercase tracking-wider transition-all duration-300 shadow-[0_0_25px_rgba(168,0,84,0.7)] cursor-pointer active:scale-95"
+                    className="w-full py-4 rounded-xl bg-gradient-to-r from-[#a80054] to-[#c70063] hover:from-[#c70063] hover:to-[#e60073] text-white text-xs sm:text-sm font-black font-mono uppercase tracking-wider transition-all duration-300 shadow-[0_0_25px_rgba(168,0,84,0.7)] cursor-pointer active:scale-95 flex items-center justify-center space-x-2"
                   >
-                    {conversionType === "ahorro"
-                      ? "Quiero comenzar mi plan de ahorro"
-                      : "Quiero asesoría personalizada"}
+                    <Send className="w-4 h-4" />
+                    <span>
+                      {conversionType === "ahorro"
+                        ? isDinersMember
+                          ? "Confirmar Solicitud de Contratación PAD"
+                          : "Solicitar Calificación y Tarjeta Diners Club"
+                        : "Quiero Asesoría Personalizada Ahora"}
+                    </span>
                   </button>
+                </div>
+
+                <div className="text-center text-[10px] font-mono text-slate-500">
+                  CONEXIÓN ENCRIPTADA TLS 1.3 • INTEGRACIÓN DIRECTA VÍA SFTP DINERS CLUB
                 </div>
               </form>
             ) : (
-              <div className="py-6 text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-emerald-950/90 border border-emerald-400 flex items-center justify-center mx-auto text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
-                  <CheckCircle2 className="w-6 h-6" />
+              <div className="py-6 text-center space-y-4">
+                <div className="w-14 h-14 rounded-full bg-emerald-950/90 border border-emerald-400 flex items-center justify-center mx-auto text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.5)]">
+                  <CheckCircle2 className="w-7 h-7" />
                 </div>
-                <h4 className="text-lg font-black text-white font-mono uppercase">
-                  Solicitud Enviada con Éxito
+                <h4 className="text-xl font-black text-white font-mono uppercase">
+                  ¡Solicitud Formalizada con Éxito!
                 </h4>
-                <p className="text-xs text-slate-200">
-                  Un asesor se comunicará contigo para formalizar tu registro.
+                <p className="text-xs text-slate-200 max-w-md mx-auto">
+                  {isDinersMember
+                    ? "Tus datos han sido registrados en la cola de activación fiduciaria de Banco Diners Club y Raúl Coka Barriga. Un asesor formalizará tu plan en menos de 24 horas."
+                    : "Hemos recibido tu solicitud de evaluación para la emisión de tu tarjeta Diners Club vinculada al programa PAD. El equipo de admisiones y crédito te contactará de inmediato."}
                 </p>
+
+                <div className="p-4 rounded-2xl bg-black/60 border border-white/10 text-left max-w-lg mx-auto font-mono text-[10px] text-emerald-300 space-y-1 overflow-x-auto">
+                  <div className="text-[10px] text-slate-500 uppercase pb-1 border-b border-white/10 flex justify-between">
+                    <span>SFTP PAYLOAD DISPATCH QUEUE: OK</span>
+                    <span className="text-emerald-400">STATUS: 200 PROCESSED</span>
+                  </div>
+                  <pre>{sftpPayload}</pre>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsSubmitted(false)}
+                  className="text-xs text-blue-400 hover:underline font-mono cursor-pointer pt-2 inline-block"
+                >
+                  ← Modificar solicitud o cotizar otra carrera
+                </button>
               </div>
             )}
           </div>
@@ -405,6 +849,9 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white font-mono drop-shadow">
               SECCIÓN FAQ
             </h2>
+            <p className="text-xs text-slate-400 font-mono mt-1">
+              Preguntas frecuentes y condiciones legales del programa REINVENTORS PAD
+            </p>
           </div>
 
           <div className="space-y-3">
@@ -482,7 +929,7 @@ export default function Home() {
                 REINVENTORS PAD © {new Date().getFullYear()}
               </div>
               <div className="text-[11px] font-mono text-slate-300">
-                UIDE × DINERS CLUB × RAÚL COKA BARRIGA
+                UIDE × DINERS CLUB DEL ECUADOR × RAÚL COKA BARRIGA
               </div>
             </div>
           </div>

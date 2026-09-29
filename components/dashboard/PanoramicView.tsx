@@ -286,8 +286,8 @@ export default function PanoramicView({
                 <div className="flex items-center space-x-3 w-full">
                   <ShieldCheck className="w-5 h-5 text-[#ffc72c] shrink-0" />
                   <div className="text-[11px] text-slate-100">
-                    <span className="font-bold text-white block">Póliza de Protección RCB:</span>
-                    Continuidad de estudios garantizada al 100% ante fallecimiento o contingencia.
+                    <span className="font-bold text-white block">Póliza de Protección RCB ($25/mes):</span>
+                    100% de la colegiatura asegurada ante fallecimiento, invalidez o desempleo involuntario.
                   </div>
                 </div>
               )}
@@ -296,8 +296,8 @@ export default function PanoramicView({
                 <div className="flex items-center space-x-3 w-full">
                   <Plane className="w-5 h-5 text-blue-300 shrink-0" />
                   <div className="text-[11px] text-slate-100">
-                    <span className="font-bold text-white block">ClubMiles & Débito Diners:</span>
-                    Acumula 1 ClubMile por dólar ahorrado y accede a tasas preferenciales de inversión.
+                    <span className="font-bold text-white block">ClubMiles & Débito Diners (3.40% anual):</span>
+                    Rendimiento con capitalización mensual, 1 ClubMile por dólar y débito automático recurrente.
                   </div>
                 </div>
               )}
@@ -307,7 +307,7 @@ export default function PanoramicView({
                   <Building className="w-5 h-5 text-pink-300 shrink-0" />
                   <div className="text-[11px] text-slate-100">
                     <span className="font-bold text-white block">Red ASU & Campus UIDE:</span>
-                    Doble titulación internacional en EE.UU., beca de fidelidad y pase preferencial.
+                    Doble titulación en EE.UU., beca de fidelidad PAD y admisión preferencial garantizada.
                   </div>
                 </div>
               )}

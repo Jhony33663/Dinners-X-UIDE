@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { CAREERS_DATA } from "@/lib/data";
 import { Career } from "@/lib/types";
+import { calculatePadFutureValue, SEGURO_RCB_MENSUAL } from "@/lib/calculator";
 import ReinventorsKeyCard from "../card-3d/ReinventorsKeyCard";
 import MagneticButton from "../ui/MagneticButton";
 import { Shield, Sparkles, Sliders, TrendingUp, Award, CheckCircle2, ChevronRight, DollarSign, Plane } from "lucide-react";
@@ -28,43 +29,31 @@ export default function Scene5SavingsSimulator({ onPlanConfigured }: Scene5Savin
     [selectedCareerId]
   );
 
-  // Financial Calculations
+  // Financial Calculations via official engine
   const calculations = useMemo(() => {
-    const yearsRemaining = Math.max(1, 18 - childAge);
-    const months = yearsRemaining * 12;
-
-    // Fiduciary compound return model (approx. 6.8% annual compound return)
-    const annualRate = 0.068;
-    const monthlyRate = Math.pow(1 + annualRate, 1 / 12) - 1;
-
-    // Future Value of ordinary annuity with monthly compounding
-    const futureValue =
-      monthlyContribution *
-      ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) *
-      (1 + monthlyRate);
-
-    const totalDeposited = monthlyContribution * months;
-    const compoundEarnings = Math.max(0, futureValue - totalDeposited);
+    const pad = calculatePadFutureValue(monthlyContribution, childAge);
+    const yearsRemaining = pad.plazoAnos;
+    const months = pad.plazoMeses;
 
     const coveragePercent = Math.min(
       100,
-      Math.round((futureValue / selectedCareer.totalTuitionRef) * 100)
+      Math.round((pad.saldoFinal / selectedCareer.totalTuitionRef) * 100)
     );
 
-    const clubMiles = Math.round(totalDeposited);
-
     // Glow intensity normalized between 0.35 and 1.0
-    const glowNormalized = Math.min(1.0, 0.35 + (futureValue / 60000) * 0.65);
+    const glowNormalized = Math.min(1.0, 0.35 + (pad.saldoFinal / 60000) * 0.65);
 
     return {
       yearsRemaining,
       months,
-      totalDeposited: Math.round(totalDeposited),
-      futureValue: Math.round(futureValue),
-      compoundEarnings: Math.round(compoundEarnings),
+      totalDeposited: Math.round(pad.totalAportadoAhorro),
+      futureValue: Math.round(pad.saldoFinal),
+      compoundEarnings: Math.round(pad.interesesNetos),
       coveragePercent,
-      clubMiles,
+      clubMiles: pad.clubMiles,
       glowNormalized,
+      cuotaTotal: pad.cuotaTotal,
+      esfuerzoDiario: pad.esfuerzoDiario,
     };
   }, [childAge, monthlyContribution, selectedCareer]);
 

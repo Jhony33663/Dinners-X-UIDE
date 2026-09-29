@@ -353,31 +353,42 @@ export const FAQ_DATA: FAQItem[] = [
   {
     category: "programa",
     question: "¿Qué es exactamente el programa REINVENTORS PAD?",
-    answer: "REINVENTORS PAD (Plan de Ahorro y Desarrollo) es una alianza estratégica sin precedentes en Ecuador entre la Universidad Internacional del Ecuador (UIDE), Diners Club del Ecuador y Raúl Coka Barriga. Permite a los padres de familia estructurar un fondo programado de ahorro para los estudios universitarios de sus hijos, beneficiándose de rendimientos fiduciarios, acumulación de ClubMiles, seguros de protección total y vinculación anticipada a la red de Arizona State University."
+    answer: "REINVENTORS PAD (Programa de Acumulación Diners) es una alianza estratégica oficial entre la Universidad Internacional del Ecuador (UIDE), Banco Diners Club del Ecuador S.A. y Raúl Coka Barriga. Permite a los padres de familia estructurar un fondo programado de ahorro para los estudios universitarios de sus hijos mediante cargo recurrente a su tarjeta Diners Club, generando rendimientos financieros con capitalización mensual, acumulación de ClubMiles (1:1), blindaje del 100% con póliza de protección estudiantil y vinculación preferencial a la red de Arizona State University (ASU)."
+  },
+  {
+    category: "finanzas",
+    question: "¿Cuál es la tasa de interés y las condiciones financieras del depósito PAD?",
+    answer: "El depósito a plazo PAD reconoce una tasa de interés nominal anual del 3.40% al 3.41% con capitalización mensual de intereses. El plazo mínimo forzoso para acceder a esta tasa es de 12 meses a partir de la constitución del primer depósito. Conforme a la legislación tributaria ecuatoriana, sobre los intereses brutos generados se aplica una retención en la fuente del 2.0% (SRI)."
   },
   {
     category: "seguridad",
-    question: "¿Cómo protege Raúl Coka Barriga los fondos ante cualquier contingencia del titular?",
-    answer: "Cada contrato PAD incluye una póliza fiduciaria de seguros suscrita por Raúl Coka Barriga. Si el tutor aportante fallece o sufre una incapacidad total y permanente, la aseguradora liquida de forma inmediata la totalidad del fondo proyectado hasta que el hijo culmine sus estudios. Además, incluye cobertura temporal de desempleo involuntario para salvaguardar la continuidad del aporte."
+    question: "¿Cómo funciona la póliza de protección estudiantil de Raúl Coka Barriga ($25 USD/mes)?",
+    answer: "Por una prima fija mensual de $25.00 USD, tu hijo/a queda protegido con una suma asegurada equivalente al 100% de la meta universitaria proyectada. En caso de fallecimiento o incapacidad total y permanente del titular aportante, la aseguradora indemniza y cubre la totalidad de los valores faltantes para garantizar que culmine su carrera en la UIDE. Además, incluye amparo por desempleo involuntario de hasta 6 meses."
   },
   {
     category: "finanzas",
-    question: "¿Cómo se realizan los aportes y qué beneficios tiene ser socio Diners Club?",
-    answer: "Los aportes se configuran mediante débito automático mensual con tu tarjeta Diners Club o cuenta bancaria afiliada. Si eres socio Diners Club, cada dólar aportado genera 1 ClubMile para tus programas de viaje y estilo de vida, además de acceder a tasas preferenciales de inversión y preaprobación de líneas de financiamiento complementarias."
+    question: "¿Qué ocurre si aún no soy socio Diners Club?",
+    answer: "El programa está diseñado tanto para socios activos como para nuevos miembros. Si aún no tienes tarjeta Diners Club, puedes ingresar tu solicitud en esta misma página: iniciarás un proceso de evaluación crediticia ágil para emisión y tarjetización Diners Club, vinculándote de inmediato al débito automático del programa PAD."
+  },
+  {
+    category: "finanzas",
+    question: "¿Cuáles son los límites de ahorro mensual establecidos por Banco Diners Club?",
+    answer: "El monto mensual seleccionado es descontado automáticamente del cupo de tu tarjeta Diners Club. Conforme a las políticas comerciales y operativas vigentes, los cargos recurrentes mensuales del PAD tienen un tope máximo de hasta $4,999.00 USD mensuales. Cualquier ajuste futuro en los montos se tramita directamente en oficinas de Diners Club o vía call center."
+  },
+  {
+    category: "seguridad",
+    question: "¿Qué garantía tengo sobre la disponibilidad de los fondos frente a la universidad?",
+    answer: "De acuerdo con el Contrato de Depósito a Plazo y la normativa bancaria, los fondos depositados en el PAD constituyen un pasivo exigible por el cliente en todo momento. Diners Club no retiene unilateralmente los valores ni los transfiere sin instrucción; el titular o fiduciario dispone de los recursos para abonar la colegiatura en la UIDE con todos los beneficios y descuentos acordados."
   },
   {
     category: "uide_asu",
-    question: "¿Qué beneficios académicos otorga el convenio UIDE con Arizona State University (ASU)?",
-    answer: "La UIDE es la única universidad en Ecuador potenciada por Arizona State University (clasificada por 9 años consecutivos como la #1 en innovación de EE.UU.). Los beneficiarios del programa PAD tienen acceso a asignaturas bilingües homologadas, bootcamps de inmersión en Phoenix, Arizona, y la oportunidad de graduarse con doble titulación internacional válida tanto en Ecuador como en Estados Unidos."
+    question: "¿Qué ventajas académicas exclusivas ofrece la alianza UIDE con Arizona State University (ASU)?",
+    answer: "La UIDE es la única universidad en Ecuador potenciada por Arizona State University (#1 en innovación en EE.UU. por 9 años consecutivos). Los estudiantes inscritos en el programa PAD obtienen reserva de cupo preferencial, acceso a programas bilingües, bootcamps de inmersión internacional y la opción de doble titulación oficial válida tanto en Ecuador como en Estados Unidos."
   },
   {
     category: "programa",
-    question: "¿Qué sucede si mi hijo decide estudiar otra carrera o decide no estudiar en la UIDE?",
-    answer: "El fondo acumulado y sus rendimientos son propiedad fiduciaria del beneficiario. Si tu hijo elige otra carrera dentro de la UIDE, el fondo se aplica automáticamente a la nueva malla. Si decide estudiar en otra institución del país o el exterior, o si deseas transferir el plan a otro de tus hijos, el fondo fiduciario puede ser reasignado o liquidado según las cláusulas de flexibilidad patrimonial establecidas en el contrato sin penalizaciones abusivas."
-  },
-  {
-    category: "finanzas",
-    question: "¿Puedo realizar aportes extraordinarios para acelerar mi meta de ahorro?",
-    answer: "Sí, el sistema fiduciario permite aportes extraordinarios en cualquier momento (por ejemplo, con décimos, bonos de productividad o utilidades). Estos aportes reducen el valor de las cuotas futuras o incrementan el fondo total proyectado, amplificando el porcentaje de cobertura de la colegiatura."
+    question: "¿Qué tratamiento se da a mis datos personales conforme a la ley?",
+    answer: "La UIDE y Diners Club del Ecuador cuentan con un Acuerdo de Tratamiento de Datos (DPA) suscrito formalmente. Toda la información registrada en el simulador y formulario es tratada bajo los más estrictos estándares de la Ley Orgánica de Protección de Datos Personales (LOPDP) de Ecuador y transmitida mediante canales cifrados SFTP."
   }
 ];
+
