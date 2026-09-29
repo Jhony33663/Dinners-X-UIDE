@@ -237,7 +237,7 @@ export default function PanoramicView({
           </div>
 
           {/* PAQUETE DE BENEFICIOS SOCIOS DINERS */}
-          <div className="space-y-2">
+          <div id="beneficios" className="space-y-2 scroll-mt-20">
             <div className="text-center">
               <span className="text-[11px] font-mono font-black text-slate-200 uppercase tracking-wider block">
                 Paquete beneficios socios diners

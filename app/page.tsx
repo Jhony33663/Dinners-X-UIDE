@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import SmoothScrollProvider from "@/components/smooth-scroll/SmoothScrollProvider";
 import TopographyCanvas from "@/components/canvas/TopographyCanvas";
 import PanoramicView from "@/components/dashboard/PanoramicView";
+import UideHeroHeader from "@/components/hero/UideHeroHeader";
 import { CAREERS_DATA, FAQ_DATA, UIDE_CAMPUSES, getCareersByCampus, getCampusExtras } from "@/lib/data";
 import { Career } from "@/lib/types";
 import {
@@ -152,6 +153,16 @@ export default function Home() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
+  const scrollToCarreras = () => {
+    const el = document.getElementById("carreras");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToBenefits = () => {
+    const el = document.getElementById("beneficios");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -207,6 +218,19 @@ export default function Home() {
       <main className="relative min-h-screen bg-[#08090C] text-white selection:bg-[#910048] selection:text-white pb-12 w-full max-w-full overflow-x-hidden">
         {/* Procedural WebGL Andean Mountain Wireframe Background with Soft Clouds & Atmospheric Misty Peaks */}
         <TopographyCanvas />
+
+        {/* ========================================================
+            GRAND UIDE HERO HEADER WITH CIALDINI PERSUASION & VISUAL MOSAIC
+            (Apegado a la marca UIDE e inspirado en la referencia fotográfica)
+           ======================================================== */}
+        <UideHeroHeader
+          onOpenSimulator={scrollToSimulator}
+          onOpenSavingsForm={scrollToSavingsForm}
+          onOpenAdvisoryForm={scrollToAdvisoryForm}
+          onScrollToCarreras={scrollToCarreras}
+          onScrollToBenefits={scrollToBenefits}
+          onScrollToFaq={scrollToFaq}
+        />
 
         {/* ========================================================
             HERO PANORAMIC VIEW MATCHING EXACTLY THE REFERENCE IMAGE
