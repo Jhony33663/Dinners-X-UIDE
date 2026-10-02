@@ -865,44 +865,63 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("rcb")}
-                  className={`py-3.5 px-4 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer text-center ${
+                  className={`py-3.5 px-4 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer text-center inline-flex items-center justify-center gap-2.5 ${
                     activeTab === "rcb"
                       ? "border-b-4 border-[#2952E8] text-[#03185D] bg-[#F8FAFC] rounded-t-xl"
                       : "border-b-4 border-transparent text-[#94A3B8] hover:text-[#03185D]"
                   }`}
                 >
-                  PESTAÑA RAUL COKA BARRIGA
+                  <img
+                    src={getAssetPath("logos/logo-rcb-100x100.jpg")}
+                    alt="Raúl Coka Barriga"
+                    className="w-5 h-5 rounded object-cover shadow-2xs shrink-0"
+                  />
+                  <span>PESTAÑA RAUL COKA BARRIGA</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab("diners")}
-                  className={`py-3.5 px-4 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer text-center ${
+                  className={`py-3.5 px-4 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer text-center inline-flex items-center justify-center gap-2.5 ${
                     activeTab === "diners"
                       ? "border-b-4 border-[#2952E8] text-[#03185D] bg-[#F8FAFC] rounded-t-xl"
                       : "border-b-4 border-transparent text-[#94A3B8] hover:text-[#03185D]"
                   }`}
                 >
-                  PESTAÑA DINERS CLUB
+                  <img
+                    src={getAssetPath("logos/logo-diners-100x100.jpg")}
+                    alt="Diners Club"
+                    className="w-5 h-5 rounded-full object-cover shadow-2xs shrink-0"
+                  />
+                  <span>PESTAÑA DINERS CLUB</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab("uide")}
-                  className={`py-3.5 px-4 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer text-center ${
+                  className={`py-3.5 px-4 text-xs sm:text-sm font-black uppercase tracking-wider transition-all cursor-pointer text-center inline-flex items-center justify-center gap-2.5 ${
                     activeTab === "uide"
                       ? "border-b-4 border-[#2952E8] text-[#03185D] bg-[#F8FAFC] rounded-t-xl"
                       : "border-b-4 border-transparent text-[#94A3B8] hover:text-[#03185D]"
                   }`}
                 >
-                  PESTAÑA UIDE
+                  <img
+                    src={getAssetPath("logos/logo-uide-100x100.jpg")}
+                    alt="UIDE"
+                    className="w-5 h-5 rounded object-cover shadow-2xs shrink-0"
+                  />
+                  <span>PESTAÑA UIDE</span>
                 </button>
               </div>
 
               {/* Contenido Pestaña 1: RAUL COKA BARRIGA */}
               {activeTab === "rcb" && (
                 <div className="bg-[#F8FAFC] p-8 rounded-2xl border border-[#E2E8F0] space-y-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-xl bg-[#03185D] text-white flex items-center justify-center font-bold text-sm">
-                      RCB
+                  <div className="flex items-center gap-3.5 mb-2">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden shadow-xs border border-[#E2E8F0] shrink-0 bg-white p-0.5">
+                      <img
+                        src={getAssetPath("logos/logo-rcb-100x100.jpg")}
+                        alt="Raúl Coka Barriga"
+                        className="w-full h-full object-cover rounded-lg"
+                      />
                     </div>
                     <div>
                       <h4 className="text-lg font-black text-[#03185D]">
@@ -951,9 +970,13 @@ export default function Home() {
               {/* Contenido Pestaña 2: DINERS CLUB */}
               {activeTab === "diners" && (
                 <div className="bg-[#F8FAFC] p-8 rounded-2xl border border-[#E2E8F0] space-y-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-xl bg-[#03185D] text-white flex items-center justify-center font-bold text-sm">
-                      DC
+                  <div className="flex items-center gap-3.5 mb-2">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden shadow-xs border border-[#E2E8F0] shrink-0 bg-white p-0.5">
+                      <img
+                        src={getAssetPath("logos/logo-diners-100x100.jpg")}
+                        alt="Diners Club International"
+                        className="w-full h-full object-cover rounded-lg"
+                      />
                     </div>
                     <div>
                       <h4 className="text-lg font-black text-[#03185D]">
@@ -1002,9 +1025,13 @@ export default function Home() {
               {/* Contenido Pestaña 3: UIDE */}
               {activeTab === "uide" && (
                 <div className="bg-[#F8FAFC] p-8 rounded-2xl border border-[#E2E8F0] space-y-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-10 h-10 rounded-xl bg-[#910048] text-[#EAAA00] flex items-center justify-center font-bold text-sm">
-                      UIDE
+                  <div className="flex items-center gap-3.5 mb-2">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden shadow-xs border border-[#E2E8F0] shrink-0 bg-white p-0.5">
+                      <img
+                        src={getAssetPath("logos/logo-uide-100x100.jpg")}
+                        alt="UIDE Powered by ASU"
+                        className="w-full h-full object-cover rounded-lg"
+                      />
                     </div>
                     <div>
                       <h4 className="text-lg font-black text-[#03185D]">
