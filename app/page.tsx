@@ -509,19 +509,14 @@ export default function Home() {
                 href="https://www.uide.edu.ec/pregrado-presencial-loja/"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Conoce el Campus Loja"
+                aria-label="Conoce el Campus Loja UIDE"
+                className="group cursor-pointer"
               >
                 <img
                   src={getAssetPath("assets/campus-loja.jpg")}
                   alt="Campus Loja UIDE"
                   loading="lazy"
                 />
-                <div className="absolute right-4 bottom-4 pointer-events-none opacity-20 hidden sm:block">
-                  <svg className="w-16 h-20 text-white" viewBox="0 0 60 75" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M5 5 H55 V45 C55 60 30 70 30 70 C30 70 5 60 5 45 Z" />
-                  </svg>
-                </div>
-                <span className="uide-campus-label">CAMPUS LOJA</span>
               </a>
 
               {/* Campus Quito */}
@@ -529,19 +524,14 @@ export default function Home() {
                 href="https://www.uide.edu.ec/pregrado-presencial-quito/"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Conoce el Campus Quito"
+                aria-label="Conoce el Campus Quito UIDE"
+                className="group cursor-pointer"
               >
                 <img
                   src={getAssetPath("assets/campus-quito.jpg")}
                   alt="Campus Quito UIDE"
                   loading="lazy"
                 />
-                <div className="absolute right-4 bottom-4 pointer-events-none opacity-20 hidden sm:block">
-                  <svg className="w-16 h-20 text-white" viewBox="0 0 60 75" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M5 5 H55 V45 C55 60 30 70 30 70 C30 70 5 60 5 45 Z" />
-                  </svg>
-                </div>
-                <span className="uide-campus-label">CAMPUS QUITO</span>
               </a>
 
               {/* Campus Guayaquil */}
@@ -549,19 +539,14 @@ export default function Home() {
                 href="https://www.uide.edu.ec/pregrado-presencial-guayaquil/"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Conoce el Campus Guayaquil"
+                aria-label="Conoce el Campus Guayaquil UIDE"
+                className="group cursor-pointer"
               >
                 <img
                   src={getAssetPath("assets/campus-gye.jpg")}
                   alt="Campus Guayaquil UIDE"
                   loading="lazy"
                 />
-                <div className="absolute right-4 bottom-4 pointer-events-none opacity-20 hidden sm:block">
-                  <svg className="w-16 h-20 text-white" viewBox="0 0 60 75" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M5 5 H55 V45 C55 60 30 70 30 70 C30 70 5 60 5 45 Z" />
-                  </svg>
-                </div>
-                <span className="uide-campus-label">CAMPUS GUAYAQUIL</span>
               </a>
             </div>
           </div>
