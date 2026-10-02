@@ -876,7 +876,7 @@ export default function Home() {
                     alt="Raúl Coka Barriga"
                     className="w-5 h-5 rounded object-cover shadow-2xs shrink-0"
                   />
-                  <span>PESTAÑA RAUL COKA BARRIGA</span>
+                  <span>RAÚL COKA BARRIGA</span>
                 </button>
                 <button
                   type="button"
@@ -892,7 +892,7 @@ export default function Home() {
                     alt="Diners Club"
                     className="w-5 h-5 rounded-full object-cover shadow-2xs shrink-0"
                   />
-                  <span>PESTAÑA DINERS CLUB</span>
+                  <span>DINERS CLUB</span>
                 </button>
                 <button
                   type="button"
@@ -908,7 +908,7 @@ export default function Home() {
                     alt="UIDE"
                     className="w-5 h-5 rounded object-cover shadow-2xs shrink-0"
                   />
-                  <span>PESTAÑA UIDE</span>
+                  <span>UIDE</span>
                 </button>
               </div>
 
