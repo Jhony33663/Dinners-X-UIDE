@@ -185,7 +185,7 @@ export default function Home() {
                   onClick={() => setVideoModalOpen(true)}
                   className="group relative rounded-3xl overflow-hidden shadow-2xl border-2 border-white/90 cursor-pointer aspect-video bg-[#03185D] flex items-center justify-center transform transition-all duration-300 hover:scale-[1.02]"
                   style={{
-                    backgroundImage: `url('${getAssetPath("assets/reinventors_pad_video_poster.jpg")}')`,
+                    backgroundImage: `url('${getAssetPath("assets/video-logros-poster.jpg")}')`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
@@ -196,7 +196,7 @@ export default function Home() {
                     if (e.key === "Enter" || e.key === " ") setVideoModalOpen(true);
                   }}
                 >
-                  <div className="absolute inset-0 bg-[#03185D]/40 group-hover:bg-[#03185D]/25 transition-colors" />
+                  <div className="absolute inset-0 bg-[#03185D]/40 group-hover:bg-[#03185D]/20 transition-colors" />
 
                   <div className="relative z-10 flex flex-col items-center text-center p-4">
                     <div className="w-16 h-16 rounded-full bg-white text-[#03185D] group-hover:bg-[#2952E8] group-hover:text-white flex items-center justify-center shadow-2xl transition-all transform group-hover:scale-110 mb-3">
@@ -206,13 +206,7 @@ export default function Home() {
                       VIDEO EXPLICATIVO
                     </span>
                     <span className="text-[11px] text-white/90 font-medium mt-1">
-                      Conoce el programa en 2 min
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-2 right-2">
-                    <span className="text-[10px] font-mono bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded">
-                      Poster: 800 × 450 px (16:9)
+                      Conoce el programa en 1 min
                     </span>
                   </div>
                 </div>
@@ -230,8 +224,12 @@ export default function Home() {
               {/* Col B (B6:B7): SEGURIDAD FINANCIERA */}
               <div className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center mb-6 shadow-xs">
-                    <Shield className="w-7 h-7" />
+                  <div className="w-16 h-16 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] p-2 flex items-center justify-center mb-6 shadow-xs overflow-hidden">
+                    <img
+                      src={getAssetPath("assets/icono-seguridad-financiera.jpg")}
+                      alt="Seguridad Financiera"
+                      className="w-full h-full object-contain rounded-xl"
+                    />
                   </div>
                   <h3 className="text-lg font-black text-[#03185D] uppercase tracking-wide mb-3">
                     SEGURIDAD FINANCIERA
@@ -242,17 +240,18 @@ export default function Home() {
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-xs font-semibold text-[#2952E8] flex items-center justify-between">
                   <span>Fideicomiso & Respaldo RCB</span>
-                  <span className="text-[10px] font-mono text-[#94A3B8]">
-                    Icono: 80 × 80 px
-                  </span>
                 </div>
               </div>
 
               {/* Col C (C6:C7): DESARROLLO INTEGRAL */}
               <div className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center mb-6 shadow-xs">
-                    <TrendingUp className="w-7 h-7" />
+                  <div className="w-16 h-16 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] p-2 flex items-center justify-center mb-6 shadow-xs overflow-hidden">
+                    <img
+                      src={getAssetPath("assets/icono-desarrollo-integral.jpg")}
+                      alt="Desarrollo Integral"
+                      className="w-full h-full object-contain rounded-xl"
+                    />
                   </div>
                   <h3 className="text-lg font-black text-[#03185D] uppercase tracking-wide mb-3">
                     DESARROLLO INTEGRAL
@@ -263,17 +262,18 @@ export default function Home() {
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-xs font-semibold text-[#2952E8] flex items-center justify-between">
                   <span>Acompañamiento vocacional continuo</span>
-                  <span className="text-[10px] font-mono text-[#94A3B8]">
-                    Icono: 80 × 80 px
-                  </span>
                 </div>
               </div>
 
               {/* Col D (D6:D7): VINCULACIÓN UNIVERSITARIA TEMPRANA */}
               <div className="bg-white rounded-2xl p-8 border border-[#E2E8F0] shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-[#EBF0FF] text-[#2952E8] flex items-center justify-center mb-6 shadow-xs">
-                    <BookOpen className="w-7 h-7" />
+                  <div className="w-16 h-16 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] p-2 flex items-center justify-center mb-6 shadow-xs overflow-hidden">
+                    <img
+                      src={getAssetPath("assets/icono-vinculacion-temprana.jpg")}
+                      alt="Vinculación Universitaria Temprana"
+                      className="w-full h-full object-contain rounded-xl"
+                    />
                   </div>
                   <h3 className="text-lg font-black text-[#03185D] uppercase tracking-wide mb-3">
                     VINCULACIÓN UNIVERSITARIA TEMPRANA
@@ -284,9 +284,6 @@ export default function Home() {
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#F1F5F9] text-xs font-semibold text-[#2952E8] flex items-center justify-between">
                   <span>Experiencia Arizona State University</span>
-                  <span className="text-[10px] font-mono text-[#94A3B8]">
-                    Icono: 80 × 80 px
-                  </span>
                 </div>
               </div>
             </div>
@@ -334,13 +331,6 @@ export default function Home() {
                       </span>
                     </div>
                   ))}
-                </div>
-
-                <div className="flex items-center gap-2 text-[11px] font-mono text-[#656565] bg-[#F1F5F9] px-3.5 py-2 rounded-lg">
-                  <Info className="w-4 h-4 text-[#2952E8]" />
-                  <span>
-                    Asset Carreras / Campus: <strong>600 × 400 px</strong>
-                  </span>
                 </div>
               </div>
 
@@ -492,6 +482,87 @@ export default function Home() {
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================
+            CAMPUS UIDE: ACCORDION INTERACTIVO
+            "LA UIDE ESTÁ A UN PASO DE DISTANCIA"
+           ======================================================== */}
+        <section className="py-16 sm:py-20 bg-white border-b border-[#E2E8F0]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Título de Sección con Watermark UIDE */}
+            <div className="relative text-center mb-10 select-none">
+              <span className="absolute left-1/2 -top-6 sm:-top-8 -translate-x-1/2 text-6xl sm:text-8xl lg:text-9xl font-black text-[#03185D]/[0.05] tracking-widest pointer-events-none uppercase">
+                UIDE
+              </span>
+              <h2 className="relative text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black tracking-tight text-[#0F172A] uppercase leading-tight">
+                LA UIDE ESTÁ A <span className="text-[#03185D]">UN PASO</span> DE DISTANCIA
+              </h2>
+            </div>
+
+            {/* Accordion Component */}
+            <div className="uide-campus-accordion" role="region" aria-label="Explora nuestros campus">
+              {/* Campus Loja */}
+              <a
+                href="https://www.uide.edu.ec/pregrado-presencial-loja/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Conoce el Campus Loja"
+              >
+                <img
+                  src={getAssetPath("assets/campus-loja.jpg")}
+                  alt="Campus Loja UIDE"
+                  loading="lazy"
+                />
+                <div className="absolute right-4 bottom-4 pointer-events-none opacity-20 hidden sm:block">
+                  <svg className="w-16 h-20 text-white" viewBox="0 0 60 75" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M5 5 H55 V45 C55 60 30 70 30 70 C30 70 5 60 5 45 Z" />
+                  </svg>
+                </div>
+                <span className="uide-campus-label">CAMPUS LOJA</span>
+              </a>
+
+              {/* Campus Quito */}
+              <a
+                href="https://www.uide.edu.ec/pregrado-presencial-quito/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Conoce el Campus Quito"
+              >
+                <img
+                  src={getAssetPath("assets/campus-quito.jpg")}
+                  alt="Campus Quito UIDE"
+                  loading="lazy"
+                />
+                <div className="absolute right-4 bottom-4 pointer-events-none opacity-20 hidden sm:block">
+                  <svg className="w-16 h-20 text-white" viewBox="0 0 60 75" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M5 5 H55 V45 C55 60 30 70 30 70 C30 70 5 60 5 45 Z" />
+                  </svg>
+                </div>
+                <span className="uide-campus-label">CAMPUS QUITO</span>
+              </a>
+
+              {/* Campus Guayaquil */}
+              <a
+                href="https://www.uide.edu.ec/pregrado-presencial-guayaquil/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Conoce el Campus Guayaquil"
+              >
+                <img
+                  src={getAssetPath("assets/campus-gye.jpg")}
+                  alt="Campus Guayaquil UIDE"
+                  loading="lazy"
+                />
+                <div className="absolute right-4 bottom-4 pointer-events-none opacity-20 hidden sm:block">
+                  <svg className="w-16 h-20 text-white" viewBox="0 0 60 75" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M5 5 H55 V45 C55 60 30 70 30 70 C30 70 5 60 5 45 Z" />
+                  </svg>
+                </div>
+                <span className="uide-campus-label">CAMPUS GUAYAQUIL</span>
+              </a>
             </div>
           </div>
         </section>
@@ -1125,9 +1196,6 @@ export default function Home() {
                     className="h-10 w-auto object-contain"
                   />
                 </div>
-                <span className="text-[10px] font-mono text-[#94A3B8] mt-2">
-                  logo uide: <strong>220 × 65 px</strong>
-                </span>
               </div>
 
               {/* Col C (C18): logo diners */}
@@ -1139,9 +1207,6 @@ export default function Home() {
                     className="h-8 w-auto object-contain"
                   />
                 </div>
-                <span className="text-[10px] font-mono text-[#94A3B8] mt-2">
-                  logo diners: <strong>220 × 60 px</strong>
-                </span>
               </div>
 
               {/* Col D (D18): logo raul coka barriga */}
@@ -1153,9 +1218,6 @@ export default function Home() {
                     className="h-8 w-auto object-contain"
                   />
                 </div>
-                <span className="text-[10px] font-mono text-[#94A3B8] mt-2">
-                  logo raul coka barriga: <strong>200 × 60 px</strong>
-                </span>
               </div>
             </div>
 
@@ -1190,12 +1252,17 @@ export default function Home() {
                 ✕
               </button>
             </div>
-            <div className="aspect-video bg-black flex flex-col items-center justify-center text-white p-6 text-center">
-              <Play className="w-16 h-16 text-[#2952E8] mb-4 fill-current" />
-              <h4 className="text-xl font-bold mb-2">Video Explicativo para Familias</h4>
-              <p className="text-xs text-white/70 max-w-md">
-                Reproductor preparado para enlazar con la URL oficial de YouTube o Vimeo del programa institucional UIDE × Diners Club × Raúl Coka Barriga.
-              </p>
+            <div className="aspect-video bg-black relative flex items-center justify-center overflow-hidden">
+              <video
+                controls
+                autoPlay
+                playsInline
+                poster={getAssetPath("assets/video-logros-poster.jpg")}
+                className="w-full h-full object-cover"
+              >
+                <source src={getAssetPath("assets/video-logros-800x450.mp4")} type="video/mp4" />
+                Tu navegador no soporta la reproducción de video HTML5.
+              </video>
             </div>
           </div>
         </div>

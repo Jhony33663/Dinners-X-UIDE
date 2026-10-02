@@ -118,3 +118,101 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #4C71FC;
 }
+
+/* --- UIDE Campus Accordion --- */
+.uide-campus-accordion {
+  display: flex;
+  width: 100%;
+  min-height: 420px;
+  gap: 4px;
+  border-radius: 80px;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.uide-campus-accordion a {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  transition: flex 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  background-color: #03185D;
+}
+
+.uide-campus-accordion a:hover,
+.uide-campus-accordion a:focus-visible {
+  flex: 3;
+  outline: none;
+}
+
+.uide-campus-accordion img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.9s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
+  display: block;
+  pointer-events: none;
+}
+
+.uide-campus-accordion a:hover img,
+.uide-campus-accordion a:focus-visible img {
+  transform: scale(1.06);
+}
+
+.uide-campus-accordion a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(3, 24, 93, 0.75) 100%);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.uide-campus-label {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #E5A812;
+  color: #FFFFFF;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  z-index: 2;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  font-family: inherit;
+}
+
+.uide-campus-accordion a:hover .uide-campus-label,
+.uide-campus-accordion a:focus-visible .uide-campus-label {
+  background-color: #F8CB5C;
+  color: #03185D;
+  transform: translateX(-50%) translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 768px) {
+  .uide-campus-accordion {
+    flex-direction: column;
+    min-height: 600px;
+    border-radius: 40px;
+  }
+
+  .uide-campus-accordion a:hover,
+  .uide-campus-accordion a:focus-visible {
+    flex: 2;
+  }
+
+  .uide-campus-label {
+    bottom: 16px;
+    font-size: 11px;
+    padding: 7px 18px;
+  }
+}
